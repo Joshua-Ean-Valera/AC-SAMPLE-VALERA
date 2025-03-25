@@ -1,17 +1,6 @@
 import streamlit as st
 
 def vigenere_encrypt(plaintext: str, key: str, alphabet: str) -> str:
-    """
-    Encrypts plaintext using a Vigenère cipher with custom alphabet.
-    
-    Args:
-        plaintext: Input text containing only characters from the alphabet.
-        key: Key containing only characters from the alphabet.
-        alphabet: String of unique characters defining character order (index=value).
-    
-    Returns:
-        Encrypted ciphertext string.
-    """
     if not alphabet:
         raise ValueError("Alphabet cannot be empty")
     if len(set(alphabet)) != len(alphabet):
@@ -44,17 +33,6 @@ def vigenere_encrypt(plaintext: str, key: str, alphabet: str) -> str:
     return ''.join(cipher_text)
 
 def caesar_encrypt_decrypt(text, shift_keys, ifdecrypt):
-    """
-    Encrypts or decrypts a text using Caesar Cipher with a list of shift keys.
-    
-    Args:
-        text: The text to encrypt or decrypt.
-        shift_keys: A list of integers representing shift values for each character.
-        ifdecrypt: Boolean flag to determine decryption.
-    
-    Returns:
-        Transformed text based on encryption or decryption.
-    """
     result = []
     shift_keys_len = len(shift_keys)
     
@@ -69,10 +47,40 @@ def caesar_encrypt_decrypt(text, shift_keys, ifdecrypt):
     
     return ''.join(result)
 
-# Streamlit UI
-st.title("Cipher Encryption Tool")
+def primitive_root(g, n):
+    req_set = {num for num in range(1, n)}
+    gen_set = {pow(g, power, n) for power in range(1, n)}
+    return req_set == gen_set
 
-cipher_choice = st.sidebar.radio("Choose Encryption Method:", ["Vigenère Cipher", "Caesar Cipher"])
+def find_primitive_roots(n):
+    pri_roots = []
+    for g in range(1, n):
+        if primitive_root(g, n):
+            pri_roots.append(g)
+    return pri_roots
+
+def print_mod_expo(n):
+    pri_roots = find_primitive_roots(n)
+    results = []
+    for g in range(1, n):
+        result_list = []
+        value = 1
+        for power in range(1, n):
+            value = pow(g, power, n)
+            result_list.append(f"{g}^{power} mod {n} = {value}")
+            if value == 1 and power < n - 1:
+                break
+        result_str = ", ".join(result_list)
+        if g in pri_roots:
+            results.append(f"{result_str} ==> {g} is primitive root of {n}")
+        else:
+            results.append(f"{result_str}")
+    return pri_roots, results
+
+# Streamlit UI
+st.title("Encryption & Primitive Root Tool")
+
+cipher_choice = st.sidebar.radio("Choose Method:", ["Vigenère Cipher", "Caesar Cipher", "Primitive Root Calculation"])
 
 if cipher_choice == "Vigenère Cipher":
     st.header("Vigenère Cipher Encryption")
@@ -97,3 +105,20 @@ elif cipher_choice == "Caesar Cipher":
         else:
             result_text = caesar_encrypt_decrypt(text, shift_keys, ifdecrypt=(operation == "Decrypt"))
             st.write(f"### {operation}ed Message:", result_text)
+
+elif cipher_choice == "Primitive Root Calculation":
+    st.header("Primitive Root Calculation")
+    n = st.number_input("Enter Prime Number:", min_value=2, step=1)
+    g = st.number_input("Enter Possible Primitive Root:", min_value=1, step=1)
+    if st.button("Check"):
+        if n < 2 or any(n % i == 0 for i in range(2, int(n ** 0.5) + 1)):
+            st.write(f"{n} is not a prime number!!")
+        else:
+            pri_roots, results = print_mod_expo(n)
+            for res in results:
+                st.write(res)
+            is_g_primitive = g in pri_roots
+            if is_g_primitive:
+                st.write(f"{g} is a primitive root of {n}. List of Primitive Roots: {pri_roots}")
+            else:
+                st.write(f"{g} is NOT a primitive root of {n}. List of Primitive Roots: {pri_roots}")
