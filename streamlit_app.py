@@ -43,16 +43,57 @@ def vigenere_encrypt(plaintext: str, key: str, alphabet: str) -> str:
     
     return ''.join(cipher_text)
 
+def caesar_encrypt_decrypt(text, shift_keys, ifdecrypt):
+    """
+    Encrypts or decrypts a text using Caesar Cipher with a list of shift keys.
+    
+    Args:
+        text: The text to encrypt or decrypt.
+        shift_keys: A list of integers representing shift values for each character.
+        ifdecrypt: Boolean flag to determine decryption.
+    
+    Returns:
+        Transformed text based on encryption or decryption.
+    """
+    result = []
+    shift_keys_len = len(shift_keys)
+    
+    for i, char in enumerate(text):
+        if 32 <= ord(char) <= 126:
+            shift = shift_keys[i % shift_keys_len]
+            effective_shift = -shift if ifdecrypt else shift
+            shifted_char = chr((ord(char) - 32 + effective_shift) % 94 + 32)
+            result.append(shifted_char)
+        else:
+            result.append(char)
+    
+    return ''.join(result)
+
 # Streamlit UI
-st.title("Vigenère Cipher Encryption")
+st.title("Cipher Encryption Tool")
 
-alphabet = st.text_input("Enter Alphabet:")
-plaintext = st.text_input("Enter Plaintext:")
-key = st.text_input("Enter Key:")
+cipher_choice = st.sidebar.radio("Choose Encryption Method:", ["Vigenère Cipher", "Caesar Cipher"])
 
-if st.button("Encrypt"):
-    try:
-        encrypted_text = vigenere_encrypt(plaintext, key, alphabet)
-        st.write("### Encrypted Message:", encrypted_text)
-    except ValueError as e:
-        st.write("Error:", str(e))
+if cipher_choice == "Vigenère Cipher":
+    st.header("Vigenère Cipher Encryption")
+    alphabet = st.text_input("Enter Alphabet:", "ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+    key = st.text_input("Enter Key:")
+    plaintext = st.text_input("Enter Plaintext:")
+    if st.button("Encrypt"):
+        try:
+            encrypted_text = vigenere_encrypt(plaintext, key, alphabet)
+            st.write("### Encrypted Message:", encrypted_text)
+        except ValueError as e:
+            st.write("Error:", str(e))
+
+elif cipher_choice == "Caesar Cipher":
+    st.header("Caesar Cipher Encryption/Decryption")
+    text = st.text_input("Enter Text:")
+    shift_keys = list(map(int, st.text_input("Enter Shift Keys (space-separated):").split()))
+    operation = st.radio("Choose Operation:", ["Encrypt", "Decrypt"])
+    if st.button("Process"):
+        if len(shift_keys) < 2 or len(shift_keys) > len(text):
+            st.write("Error: Shift keys length must be between 2 and the length of the text.")
+        else:
+            result_text = caesar_encrypt_decrypt(text, shift_keys, ifdecrypt=(operation == "Decrypt"))
+            st.write(f"### {operation}ed Message:", result_text)
