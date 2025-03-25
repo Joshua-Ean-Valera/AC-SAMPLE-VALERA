@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.title("HELLO MY KNEEGEAR!!!")
+st.title("Sorry na My Baby")
 st.write(
-    "Let's start building! For help and inspiration, head over to [docs.streamlit.io](https://docs.streamlit.io/)."
+    "Patawarin mo na ako kahit parehas naman tayong may mali. :(("
 )
