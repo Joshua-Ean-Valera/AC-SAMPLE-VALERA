@@ -1,80 +1,58 @@
 import streamlit as st
-import random
-from math import gcd
 
-def mod_inverse(e, phi):
-    a, b = e, phi
-    x0, x1 = 0, 1
-    while a:
-        q, b, a = b // a, a, b % a
-        x0, x1 = x1 - q * x0, x0
-    return x1 + phi if x1 < 0 else x1
-
-def is_prime(n):
-    if n < 2:
-        return False
-    for i in range(2, int(n ** 0.5) + 1):
-        if n % i == 0:
-            return False
-    return True
-
-def generate_prime(start=1000, end=5000):
-    while True:
-        num = random.randint(start, end)
-        if is_prime(num):
-            return num
-
-def generate_keys():
-    p = generate_prime()
-    q = generate_prime()
-    while p == q:
-        q = generate_prime()
+def vigenere_encrypt(plaintext: str, key: str, alphabet: str) -> str:
+    """
+    Encrypts plaintext using a Vigenère cipher with custom alphabet.
     
-    n = p * q
-    phi = (p - 1) * (q - 1)
+    Args:
+        plaintext: Input text containing only characters from the alphabet.
+        key: Key containing only characters from the alphabet.
+        alphabet: String of unique characters defining character order (index=value).
     
-    e = 65537  # Commonly used public exponent
-    while gcd(e, phi) != 1:
-        e = random.randrange(2, phi)
+    Returns:
+        Encrypted ciphertext string.
+    """
+    if not alphabet:
+        raise ValueError("Alphabet cannot be empty")
+    if len(set(alphabet)) != len(alphabet):
+        raise ValueError("Alphabet must contain unique characters")
+    if not key:
+        raise ValueError("Key cannot be empty")
+    if not plaintext:
+        raise ValueError("Plaintext cannot be empty")
     
-    d = mod_inverse(e, phi)
+    alphabet_set = set(alphabet)
+    key = ''.join(c for c in key if c in alphabet_set)
     
-    return (e, n), (d, n)
-
-def encrypt(message, public_key):
-    e, n = public_key
-    cipher = [pow(ord(char), e, n) for char in message]
-    return cipher
-
-def decrypt(cipher, private_key):
-    d, n = private_key
-    try:
-        message = ''.join([chr(pow(char, d, n)) for char in cipher])
-        return message
-    except ValueError:
-        return "Decryption error: Invalid message or key"
+    if not key:
+        raise ValueError("Key contains no valid characters")
+    
+    cipher_text = []
+    key_index = 0
+    
+    for char in plaintext:
+        if char in alphabet_set:
+            char_index = alphabet.index(char)
+            key_char = key[key_index % len(key)]
+            key_index += 1
+            key_val = alphabet.index(key_char)
+            new_index = (char_index + key_val) % len(alphabet)
+            cipher_text.append(alphabet[new_index])
+        else:
+            cipher_text.append(char)
+    
+    return ''.join(cipher_text)
 
 # Streamlit UI
-st.title("RSA Encryption & Decryption")
+st.title("Vigenère Cipher Encryption")
 
-if "public_key" not in st.session_state or "private_key" not in st.session_state:
-    public_key, private_key = generate_keys()
-    st.session_state.public_key = public_key
-    st.session_state.private_key = private_key
-else:
-    public_key = st.session_state.public_key
-    private_key = st.session_state.private_key
-
-st.write("### Public Key:", public_key)
-st.write("### Private Key:", private_key)
-
-message = st.text_input("Enter a message to encrypt:", "Sorry na My Baby")
+alphabet = st.text_input("Enter Alphabet:", "ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+key = st.text_input("Enter Key:")
+plaintext = st.text_input("Enter Plaintext:")
 
 if st.button("Encrypt"):
-    st.balloons()
-    st.session_state.encrypted_message = "Encryption Skipped - Enjoy the Balloons!"
-    st.write("### Encrypted Message:", st.session_state.encrypted_message)
-
-if "encrypted_message" in st.session_state and st.button("Decrypt"):
-    decrypted_message = decrypt(st.session_state.encrypted_message, private_key)
-    st.write("### Decrypted Message:", decrypted_message)
+    try:
+        encrypted_text = vigenere_encrypt(plaintext, key, alphabet)
+        st.write("### Encrypted Message:", encrypted_text)
+    except ValueError as e:
+        st.write("Error:", str(e))
