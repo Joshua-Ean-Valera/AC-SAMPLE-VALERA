@@ -46,7 +46,7 @@ def vigenere_encrypt(plaintext: str, key: str, alphabet: str) -> str:
 # Streamlit UI
 st.title("Vigenère Cipher Encryption")
 
-alphabet = st.text_input("Enter Alphabet:", "ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+alphabet = st.text_input("Enter Alphabet:")
 key = st.text_input("Enter Key:")
 plaintext = st.text_input("Enter Plaintext:")
 
