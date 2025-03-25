@@ -48,8 +48,11 @@ def encrypt(message, public_key):
 
 def decrypt(cipher, private_key):
     d, n = private_key
-    message = ''.join([chr(pow(char, d, n)) for char in cipher])
-    return message
+    try:
+        message = ''.join([chr(pow(char, d, n)) for char in cipher])
+        return message
+    except ValueError:
+        return "Decryption error: Invalid message or key"
 
 # Streamlit UI
 st.title("RSA Encryption & Decryption")
