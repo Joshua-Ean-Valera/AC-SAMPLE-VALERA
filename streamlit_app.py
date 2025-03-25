@@ -71,9 +71,9 @@ st.write("### Private Key:", private_key)
 message = st.text_input("Enter a message to encrypt:", "Sorry na My Baby")
 
 if st.button("Encrypt"):
-    encrypted_message = encrypt(message, public_key)
-    st.session_state.encrypted_message = encrypted_message
-    st.write("### Encrypted Message:", encrypted_message)
+    st.balloons()
+    st.session_state.encrypted_message = "Encryption Skipped - Enjoy the Balloons!"
+    st.write("### Encrypted Message:", st.session_state.encrypted_message)
 
 if "encrypted_message" in st.session_state and st.button("Decrypt"):
     decrypted_message = decrypt(st.session_state.encrypted_message, private_key)
