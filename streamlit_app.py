@@ -148,7 +148,7 @@ elif cipher_choice == "Caesar Cipher":
         result_text = caesar_encrypt_decrypt(text, shift_keys, ifdecrypt=(operation == "Decrypt"))
         st.write(f"### {operation}ed Message:", result_text)
 
-elif cipher_choice == "Custom XOR Cipher":
+elif cipher_choice == "Block Cipher":
     st.header("Block Cipher")
     text = st.text_input("Enter Text:")
     key = st.text_input("Enter 8-Character Key:")
