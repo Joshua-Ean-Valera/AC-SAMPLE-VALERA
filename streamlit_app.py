@@ -125,7 +125,7 @@ def encrypt_decrypt(text, key, operation):
 # Streamlit UI yeahh
 st.title("Applied Cryphtography Project")
 
-cipher_choice = st.sidebar.radio("Choose Method:", ["Vigenère Cipher", "Caesar Cipher", "Custom XOR Cipher", "Primitive Root Calculation"])
+cipher_choice = st.sidebar.radio("Choose Method:", ["Vigenère Cipher", "Caesar Cipher", "Block Cipher", "Primitive Root Calculation"])
 
 if cipher_choice == "Vigenère Cipher":
     st.header("Vigenère Cipher Encryption")
@@ -149,7 +149,7 @@ elif cipher_choice == "Caesar Cipher":
         st.write(f"### {operation}ed Message:", result_text)
 
 elif cipher_choice == "Custom XOR Cipher":
-    st.header("Bock Cipher")
+    st.header("Block Cipher")
     text = st.text_input("Enter Text:")
     key = st.text_input("Enter 8-Character Key:")
     operation = st.radio("Choose Operation:", ["Encrypt", "Decrypt"])
