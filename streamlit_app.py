@@ -123,7 +123,7 @@ def encrypt_decrypt(text, key, operation):
         return "Error: Invalid operation. Use 'encrypt' or 'decrypt' "
     
 # Streamlit UI yeahh
-st.title("Applied Crypthography Project")
+st.title("Applied Cryptography Project")
 
 cipher_choice = st.sidebar.radio("Choose Method:", ["Vigenère Cipher", "Caesar Cipher", "Custom XOR Cipher", "Primitive Root Calculation"])
 
