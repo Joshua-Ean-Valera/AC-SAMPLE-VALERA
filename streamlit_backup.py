@@ -1,8 +1,4 @@
 import streamlit as st
-import random
-from math import gcd
-
-# Vigenère Cipher
 
 def vigenere_encrypt(plaintext: str, key: str, alphabet: str) -> str:
     if not alphabet:
@@ -36,8 +32,6 @@ def vigenere_encrypt(plaintext: str, key: str, alphabet: str) -> str:
     
     return ''.join(cipher_text)
 
-# Caesar Cipher
-
 def caesar_encrypt_decrypt(text, shift_keys, ifdecrypt):
     result = []
     shift_keys_len = len(shift_keys)
@@ -52,8 +46,6 @@ def caesar_encrypt_decrypt(text, shift_keys, ifdecrypt):
             result.append(char)
     
     return ''.join(result)
-
-# Primitive Root Calculation
 
 def primitive_root(g, n):
     req_set = {num for num in range(1, n)}
@@ -85,49 +77,55 @@ def print_mod_expo(n):
             results.append(f"{result_str}")
     return pri_roots, results
 
-# RSA Encryption
-
-def generate_prime_number():
-    while True:
-        prime_candidate = random.randint(2**8, 2**9)
-        if is_prime(prime_candidate):
-            return prime_candidate
-
-def is_prime(num):
-    if num == 2:
-        return True
-    if num < 2 or num % 2 == 0:
-        return False
-    for n in range(3, int(num**0.5)+2, 2):
-        if num % n == 0:
-            return False
-    return True
-
-def generate_keypair():
-    p = generate_prime_number()
-    q = generate_prime_number()
-    n = p * q
-    totient = (p - 1) * (q - 1)
-    e = random.randrange(1, totient)
-    g = gcd(e, totient)
-    while g != 1:
-        e = random.randrange(1, totient)
-        g = gcd(e, totient)
-    d = pow(e, -1, totient)
-    return (e, n), (d, n)
-
-def rsa_encrypt(pk, plaintext):
-    key, n = pk
-    return [pow(ord(char), key, n) for char in plaintext]
-
-def rsa_decrypt(pk, ciphertext):
-    key, n = pk
-    return ''.join(chr(pow(char, key, n)) for char in ciphertext)
-
-# Streamlit UI
+def pad_message(message, block_size=8, padding_char='_'):
+    padding_length = (block_size - len(message) % block_size) % block_size
+    return message + (padding_char * padding_length)
+    
+def remove_padding(message, padding_char='_'):
+    return message.rstrip(padding_char)
+    
+def xor_operation(block, key):
+    return [ord(b) ^ ord(k) for b, k in zip(block, key)]
+    
+def encrypt(text, key):
+    text = pad_message(text)
+    result = []
+    
+    for i in range(0, len(text), 8):
+        block = text[i:i+8]
+        encrypted_block = xor_operation(block, key)
+        result.extend(encrypted_block)
+        
+    return ' '.join(format(byte, '02X') for byte in result)
+    
+def decrypt(hex_text, key):
+    try:
+        hex_values = [int(h, 16) for h in hex_text.split()]
+    except ValueError:
+        return "Error: Invalid hex input for decryption"
+        
+    result = []
+    for i in range(0, len(hex_values), 8):
+        block = hex_values[i:i+8]
+        decrypted_block = ''.join(chr(b ^ ord(k)) for b, k in zip(block, key))
+        result.append(decrypted_block)
+        
+    return remove_padding(''.join(result))
+    
+def encrypt_decrypt(text, key, operation):
+    if len(key) != 8:
+        return "Error: Key must be exactly 8 characters"
+    if operation == 'encrypt':
+        return encrypt(text, key)
+    elif operation == 'decrypt':
+        return decrypt(text, key)
+    else:
+        return "Error: Invalid operation. Use 'encrypt' or 'decrypt' "
+    
+# Streamlit UI yeahh
 st.title("Applied Cryptography Project")
 
-cipher_choice = st.sidebar.radio("Choose Method:", ["Vigenère Cipher", "Caesar Cipher", "Primitive Root Calculation", "RSA Encryption"])
+cipher_choice = st.sidebar.radio("Choose Method:", ["Vigenère Cipher", "Caesar Cipher", "Custom XOR Cipher", "Primitive Root Calculation"])
 
 if cipher_choice == "Vigenère Cipher":
     st.header("Vigenère Cipher Encryption")
@@ -150,32 +148,21 @@ elif cipher_choice == "Caesar Cipher":
         result_text = caesar_encrypt_decrypt(text, shift_keys, ifdecrypt=(operation == "Decrypt"))
         st.write(f"### {operation}ed Message:", result_text)
 
+elif cipher_choice == "Custom XOR Cipher":
+    st.header("Custom XOR Cipher")
+    text = st.text_input("Enter Text:")
+    key = st.text_input("Enter 8-Character Key:")
+    operation = st.radio("Choose Operation:", ["Encrypt", "Decrypt"])
+    if st.button("Process"):
+        result_text = encrypt_decrypt(text, key, operation.lower())
+        st.write(f"### {operation}ed Message:", result_text)
+
 elif cipher_choice == "Primitive Root Calculation":
     st.header("Primitive Root Calculation")
     n = st.number_input("Enter Prime Number:", min_value=2, step=1)
+    g = st.number_input("Enter Possible Primitive Root:", min_value=1, step=1)
     if st.button("Check"):
         pri_roots, results = print_mod_expo(n)
         for res in results:
             st.write(res)
         st.write(f"List of Primitive Roots: {pri_roots}")
-
-elif cipher_choice == "RSA Encryption":
-    st.header("RSA Encryption")
-    if st.button("Generate Keys"):
-        public_key, private_key = generate_keypair()
-        st.session_state["public_key"] = public_key
-        st.session_state["private_key"] = private_key
-        st.write(f"Public Key: {public_key}")
-        st.write(f"Private Key: {private_key}")
-    
-    message = st.text_input("Enter Message:")
-    if st.button("Encrypt"):
-        if "public_key" in st.session_state:
-            encrypted_msg = rsa_encrypt(st.session_state["public_key"], message)
-            st.session_state["encrypted_msg"] = encrypted_msg
-            st.write("### Encrypted Message:", encrypted_msg)
-    
-    if st.button("Decrypt"):
-        if "private_key" in st.session_state and "encrypted_msg" in st.session_state:
-            decrypted_msg = rsa_decrypt(st.session_state["private_key"], st.session_state["encrypted_msg"])
-            st.write("### Decrypted Message:", decrypted_msg)
