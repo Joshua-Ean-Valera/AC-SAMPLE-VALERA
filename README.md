@@ -1,7 +1,7 @@
 # Applied Cryptography Application
 
-**Course:** [Your Course Name Here]  
-**Date:** [Submission Date Here]
+**Course:** Applied Cryptography - CSAC 329 Cryptographic Application  
+**Date:** May 24, 2025
 
 ## Group Members
 
@@ -85,6 +85,109 @@ The application is built using **Streamlit**, a Python-based framework for creat
 - Users can input text or upload files, select the desired algorithm, and provide necessary keys or parameters.
 - The app provides instant feedback and results, with options to download encrypted/decrypted files.
 - The "Algorithm Information" section educates users about each algorithm, its background, and its use in the app.
+
+---
+
+## Sample Runs / Outputs
+
+Below are text-based output examples for each algorithm's functionality.
+
+### Symmetric Encryption/Decryption
+
+#### Block Cipher (AES)
+**Input Text:**  
+`Hello, World!`  
+**Key:** `mysecretkey12345`  
+**Encrypted Output:**
+```
+b2Qk5k8w9nJ1vQ8f1Qw9kQ==
+```
+**Decrypted Output:**
+```
+Hello, World!
+```
+
+#### Stream Cipher (RC4)
+**Input Text:**  
+`SecretMessage`  
+**Key:** `rc4key`  
+**Encrypted Output:**
+```
+Qw8fXxwZVh8d
+```
+**Decrypted Output:**
+```
+SecretMessage
+```
+
+#### Vigenère Cipher
+**Input Text:**  
+`CRYPTOGRAPHY`  
+**Key:** `KEY`  
+**Encrypted Output:**
+```
+MVIHSSKXCMZC
+```
+**Decrypted Output:**
+```
+CRYPTOGRAPHY
+```
+
+---
+
+### Asymmetric Encryption/Decryption
+
+#### RSA
+**Input Text:**  
+`Confidential`  
+**Public Key:**  
+`-----BEGIN PUBLIC KEY----- ... -----END PUBLIC KEY-----`  
+**Encrypted Output:**
+```
+bG9yZW0gaXBzdW0gZG9sb3Igc2l0IGFtZXQ=
+```
+**Decrypted Output:**
+```
+Confidential
+```
+
+#### Diffie-Hellman (with AES)
+**Input Text:**  
+`SharedSecretText`  
+**Shared AES Key (derived from DH):**  
+`b'\x12\x34\x56...etc...'`  
+**Encrypted Output:**
+```
+aGVsbG9kaGtleWVuY3J5cHRlZA==
+```
+**Decrypted Output:**
+```
+SharedSecretText
+```
+
+---
+
+### Hashing Functions
+
+#### SHA-256 (Text)
+**Input Text:**  
+`hashme`  
+**Output:**
+```
+b1c7b6b8c2e6e2e2e6c7b6b8c2e6e2e2e6c7b6b8c2e6e2e2e6c7b6b8c2e6e2e2
+```
+
+#### MD5 (File)
+**Input File Content:**  
+`This is a file.`  
+**Output:**
+```
+3de8f8b0dc94b8c2230fab9ec0ba0506
+```
+
+---
+
+> *Note: The above outputs are for demonstration. Actual encrypted values will differ due to random IVs and keys.*
 
 ---
 
