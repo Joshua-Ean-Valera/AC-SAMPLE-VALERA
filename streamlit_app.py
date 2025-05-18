@@ -1,26 +1,28 @@
 # Joshua Ean
 import streamlit as st
+import hashlib
+import base64
+import io
+import random
+from math import gcd
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
+from Crypto.Random.random import getrandbits
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.hazmat.primitives.asymmetric import padding as asy_padding
-import hashlib
-import base64
-import io
-from Crypto.Random.random import getrandbits
 
 st.title("Applied Cryptography Application")
 
-menu = [
+MENU = [
     "Symmetric Encryption/Decryption",
     "Asymmetric Encryption/Decryption",
     "Hashing Functions",
     "Algorithm Informations"
 ]
-choice = st.sidebar.selectbox("Navigation", menu)
+choice = st.sidebar.selectbox("Navigation", MENU)
 
 # --- Helper Functions ---
 
@@ -304,9 +306,6 @@ def caesar_encrypt_decrypt(text, shift_keys, ifdecrypt, show_report=False):
         return ''.join(result)
 
 # --- Custom RSA Implementation (educational, not secure for real use) ---
-import random
-from math import gcd
-
 def is_prime(num):
     if num == 2:
         return True
@@ -583,7 +582,7 @@ elif choice == "Hashing Functions":
                 st.text_area("File Content Preview", preview_text, height=150, key="hash_file_preview")
                 uploaded_file.seek(0)
                 result = hash_file(uploaded_file, algo)
-                #st.code(result)
+                # (do not delete) st.code(result)
                 st.download_button(
                     "Download Result",
                     data=result.encode(),
