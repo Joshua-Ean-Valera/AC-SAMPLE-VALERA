@@ -523,14 +523,25 @@ elif choice == "Asymmetric Encryption/Decryption":
             if st.button("Generate RSA Keypair (Educational)", key="rsa_custom_gen"):
                 keys = rsa_generate_keypair_custom()
                 st.session_state['rsa_custom_keys'] = keys
+                # Auto-fill public and private key fields in session state
+                st.session_state['rsa_custom_pub_val'] = f"{keys['e']} {keys['n']}"
+                st.session_state['rsa_custom_priv_val'] = f"{keys['d']} {keys['n']}"
             keys = st.session_state.get('rsa_custom_keys', None)
             if keys:
                 st.markdown(f"**p:** {keys['p']}  \n**q:** {keys['q']}  \n**n:** {keys['n']}  \n**totient:** {keys['totient']}")
                 st.markdown(f"**Public key (e, n):** ({keys['e']}, {keys['n']})")
                 st.markdown(f"**Private key (d, n):** ({keys['d']}, {keys['n']})")
         with col2:
-            pubkey_str = st.text_input("Public Key (e n)", value="", key="rsa_custom_pub")
-            privkey_str = st.text_input("Private Key (d n)", value="", key="rsa_custom_priv")
+            pubkey_str = st.text_input(
+                "Public Key (e n)",
+                value=st.session_state.get('rsa_custom_pub_val', ""),
+                key="rsa_custom_pub"
+            )
+            privkey_str = st.text_input(
+                "Private Key (d n)",
+                value=st.session_state.get('rsa_custom_priv_val', ""),
+                key="rsa_custom_priv"
+            )
         if st.button("Run RSA (Educational)", key="rsa_custom_run"):
             try:
                 keys = st.session_state.get('rsa_custom_keys', None)
