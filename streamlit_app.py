@@ -494,7 +494,7 @@ if choice == "Symmetric Encryption/Decryption":
 
 elif choice == "Asymmetric Encryption/Decryption":
     st.header("Asymmetric Encryption/Decryption")
-    algo = st.selectbox("Algorithm", ["RSA (PyCryptodome)", "RSA (Educational)", "Diffie-Hellman"])
+    algo = st.selectbox("Algorithm", ["RSA (PyCryptodome)", "Diffie-Hellman"])
     mode = st.radio("Mode", ["Encrypt", "Decrypt"])
     text = st.text_area("Text")
     if algo == "RSA (PyCryptodome)":
@@ -514,64 +514,6 @@ elif choice == "Asymmetric Encryption/Decryption":
                 else:
                     result = rsa_decrypt(private_key, text)
                 st.code(result)
-            except Exception as e:
-                st.error(str(e))
-    elif algo == "RSA (Educational)":
-        st.markdown("##### Educational RSA (small primes, for demonstration only)")
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button("Generate RSA Keypair (Educational)", key="rsa_custom_gen"):
-                keys = rsa_generate_keypair_custom()
-                st.session_state['rsa_custom_keys'] = keys
-                # Auto-fill public and private key fields in session state
-                st.session_state['rsa_custom_pub_val'] = f"{keys['e']} {keys['n']}"
-                st.session_state['rsa_custom_priv_val'] = f"{keys['d']} {keys['n']}"
-            keys = st.session_state.get('rsa_custom_keys', None)
-            if keys:
-                st.markdown(f"**p:** {keys['p']}  \n**q:** {keys['q']}  \n**n:** {keys['n']}  \n**totient:** {keys['totient']}")
-                st.markdown(f"**Public key (e, n):** ({keys['e']}, {keys['n']})")
-                st.markdown(f"**Private key (d, n):** ({keys['d']}, {keys['n']})")
-        with col2:
-            pubkey_str = st.text_input(
-                "Public Key (e n)",
-                value=st.session_state.get('rsa_custom_pub_val', ""),
-                key="rsa_custom_pub"
-            )
-            privkey_str = st.text_input(
-                "Private Key (d n)",
-                value=st.session_state.get('rsa_custom_priv_val', ""),
-                key="rsa_custom_priv"
-            )
-        if st.button("Run RSA (Educational)", key="rsa_custom_run"):
-            try:
-                keys = st.session_state.get('rsa_custom_keys', None)
-                if mode == "Encrypt":
-                    if pubkey_str:
-                        e, n = map(int, pubkey_str.strip().split())
-                        pubkey = (e, n)
-                    elif keys:
-                        pubkey = keys['public']
-                    else:
-                        st.error("Provide or generate a public key.")
-                        st.stop()
-                    cipher = rsa_encrypt_custom(pubkey, text)
-                    st.markdown(f"**Ciphertext (as numbers):** `{rsa_ciphertext_to_str(cipher)}`")
-                    st.markdown(f"**Ciphertext (as chars):** `{''.join(chr(c) for c in cipher)}`")
-                else:
-                    if privkey_str:
-                        d, n = map(int, privkey_str.strip().split())
-                        privkey = (d, n)
-                    elif keys:
-                        privkey = keys['private']
-                    else:
-                        st.error("Provide or generate a private key.")
-                        st.stop()
-                    cipher = rsa_str_to_cipher(text)
-                    if not cipher:
-                        st.error("Input must be space-separated numbers for decryption.")
-                        st.stop()
-                    plain = rsa_decrypt_custom(privkey, cipher)
-                    st.markdown(f"**Plain text:** `{plain}`")
             except Exception as e:
                 st.error(str(e))
     elif algo == "Diffie-Hellman":
