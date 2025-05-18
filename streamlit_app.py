@@ -304,6 +304,68 @@ def caesar_encrypt_decrypt(text, shift_keys, ifdecrypt, show_report=False):
     else:
         return ''.join(result)
 
+# --- Custom RSA Implementation (educational, not secure for real use) ---
+import random
+from math import gcd
+
+def is_prime(num):
+    if num == 2:
+        return True
+    if num < 2 or num % 2 == 0:
+        return False
+    for n in range(3, int(num**0.5)+2, 2):
+        if num % n == 0:
+            return False
+    return True
+
+def generate_prime_number():
+    while True:
+        prime_candidate = random.randint(2**8, 2**9)
+        if is_prime(prime_candidate):
+            return prime_candidate
+
+def rsa_generate_keypair_custom():
+    p = generate_prime_number()
+    q = generate_prime_number()
+    n = p * q
+    totient = (p - 1) * (q - 1)
+    e = random.randrange(1, totient)
+    g = gcd(e, totient)
+    while g != 1:
+        e = random.randrange(1, totient)
+        g = gcd(e, totient)
+    d = pow(e, -1, totient)
+    # Return as dict for clarity
+    return {
+        "p": p,
+        "q": q,
+        "n": n,
+        "totient": totient,
+        "e": e,
+        "d": d,
+        "public": (e, n),
+        "private": (d, n)
+    }
+
+def rsa_encrypt_custom(pk, plaintext):
+    key, n = pk
+    cipher = [pow(ord(char), key, n) for char in plaintext]
+    return cipher
+
+def rsa_decrypt_custom(pk, ciphertext):
+    key, n = pk
+    plain = [chr(pow(char, key, n)) for char in ciphertext]
+    return ''.join(plain)
+
+def rsa_ciphertext_to_str(cipher):
+    return ' '.join(str(num) for num in cipher)
+
+def rsa_str_to_cipher(cipher_str):
+    try:
+        return [int(x) for x in cipher_str.strip().split()]
+    except Exception:
+        return []
+
 # --- UI Logic ---
 
 if choice == "Symmetric Encryption/Decryption":
@@ -432,10 +494,10 @@ if choice == "Symmetric Encryption/Decryption":
 
 elif choice == "Asymmetric Encryption/Decryption":
     st.header("Asymmetric Encryption/Decryption")
-    algo = st.selectbox("Algorithm", ["RSA", "Diffie-Hellman"])
+    algo = st.selectbox("Algorithm", ["RSA (PyCryptodome)", "RSA (Educational)", "Diffie-Hellman"])
     mode = st.radio("Mode", ["Encrypt", "Decrypt"])
     text = st.text_area("Text")
-    if algo == "RSA":
+    if algo == "RSA (PyCryptodome)":
         priv, pub = st.columns(2)
         with priv:
             private_key = st.text_area("Private Key (PEM)", height=150)
@@ -452,6 +514,53 @@ elif choice == "Asymmetric Encryption/Decryption":
                 else:
                     result = rsa_decrypt(private_key, text)
                 st.code(result)
+            except Exception as e:
+                st.error(str(e))
+    elif algo == "RSA (Educational)":
+        st.markdown("##### Educational RSA (small primes, for demonstration only)")
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("Generate RSA Keypair (Educational)", key="rsa_custom_gen"):
+                keys = rsa_generate_keypair_custom()
+                st.session_state['rsa_custom_keys'] = keys
+            keys = st.session_state.get('rsa_custom_keys', None)
+            if keys:
+                st.markdown(f"**p:** {keys['p']}  \n**q:** {keys['q']}  \n**n:** {keys['n']}  \n**totient:** {keys['totient']}")
+                st.markdown(f"**Public key (e, n):** ({keys['e']}, {keys['n']})")
+                st.markdown(f"**Private key (d, n):** ({keys['d']}, {keys['n']})")
+        with col2:
+            pubkey_str = st.text_input("Public Key (e n)", value="", key="rsa_custom_pub")
+            privkey_str = st.text_input("Private Key (d n)", value="", key="rsa_custom_priv")
+        if st.button("Run RSA (Educational)", key="rsa_custom_run"):
+            try:
+                keys = st.session_state.get('rsa_custom_keys', None)
+                if mode == "Encrypt":
+                    if pubkey_str:
+                        e, n = map(int, pubkey_str.strip().split())
+                        pubkey = (e, n)
+                    elif keys:
+                        pubkey = keys['public']
+                    else:
+                        st.error("Provide or generate a public key.")
+                        st.stop()
+                    cipher = rsa_encrypt_custom(pubkey, text)
+                    st.markdown(f"**Ciphertext (as numbers):** `{rsa_ciphertext_to_str(cipher)}`")
+                    st.markdown(f"**Ciphertext (as chars):** `{''.join(chr(c) for c in cipher)}`")
+                else:
+                    if privkey_str:
+                        d, n = map(int, privkey_str.strip().split())
+                        privkey = (d, n)
+                    elif keys:
+                        privkey = keys['private']
+                    else:
+                        st.error("Provide or generate a private key.")
+                        st.stop()
+                    cipher = rsa_str_to_cipher(text)
+                    if not cipher:
+                        st.error("Input must be space-separated numbers for decryption.")
+                        st.stop()
+                    plain = rsa_decrypt_custom(privkey, cipher)
+                    st.markdown(f"**Plain text:** `{plain}`")
             except Exception as e:
                 st.error(str(e))
     elif algo == "Diffie-Hellman":
