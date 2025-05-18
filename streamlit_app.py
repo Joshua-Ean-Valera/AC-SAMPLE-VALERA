@@ -378,8 +378,8 @@ if choice == "Symmetric Encryption/Decryption":
         uploaded_file = st.file_uploader("Upload File", type=None)
         if uploaded_file:
             if algo == "Block Cipher (XOR)":
-                key = st.text_input("Key (exactly 8 characters)", value="my8chark")
-                if st.button("Run File Crypto"):
+                key = st.text_input("Key (exactly 8 characters)", value="my8chark", key="file_xor_key")
+                if st.button("Run File Crypto", key="file_xor_btn"):
                     if len(key) != 8:
                         st.error("Key must be exactly 8 characters")
                     else:
@@ -393,18 +393,15 @@ if choice == "Symmetric Encryption/Decryption":
                             else:
                                 out = xor_block_decrypt(text, key)
                                 out_bytes = out.encode()
-                            st.download_button("Download Result", data=out_bytes, file_name="result.txt")
-                            st.text_area("File Content Preview", text, height=150)
+                            st.download_button("Download Result", data=out_bytes, file_name="result.txt", key="file_xor_download")
+                            st.text_area("File Content Preview", text, height=150, key="file_xor_preview")
                         except Exception as e:
                             st.error(str(e))
             elif algo == "Caesar Cipher (multi-key)":
-                shift_keys_str = st.text_input("Shift Keys (space-separated integers)", value="3 1 4")
-                try:
-                    shift_keys = list(map(int, shift_keys_str.strip().split()))
-                except Exception:
-                    shift_keys = []
-                if st.button("Run File Crypto"):
+                shift_keys_str = st.text_input("Shift Keys (space-separated integers)", value="3 1 4", key="file_caesar_keys")
+                if st.button("Run File Crypto", key="file_caesar_btn"):
                     try:
+                        shift_keys = list(map(int, shift_keys_str.strip().split()))
                         file_bytes = uploaded_file.read()
                         text = file_bytes.decode(errors='ignore')
                         if len(shift_keys) < 2 or len(shift_keys) > len(text):
@@ -414,7 +411,8 @@ if choice == "Symmetric Encryption/Decryption":
                                 out = caesar_encrypt_decrypt(text, shift_keys, ifdecrypt=False)
                             else:
                                 out = caesar_encrypt_decrypt(text, shift_keys, ifdecrypt=True)
-                            st.download_button("Download Result", data=out.encode(), file_name="result.txt")
+                            st.download_button("Download Result", data=out.encode(), file_name="result.txt", key="file_caesar_download")
+                            st.text_area("File Content Preview", text, height=150, key="file_caesar_preview")
                     except Exception as e:
                         st.error(str(e))
 
