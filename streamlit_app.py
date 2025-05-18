@@ -1,8 +1,12 @@
 # Joshua Ean
 import streamlit as st
+import sys
 import hashlib
 import base64
 import io
+
+# Show Python version at the top of the app
+st.info(f"Python version: {sys.version.split()[0]} (expected 3.11)")
 
 # Only import cryptography and pycryptodome if available, otherwise show a warning.
 try:
