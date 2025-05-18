@@ -1,26 +1,36 @@
 # Joshua Ean
 import streamlit as st
+import hashlib
+import base64
+import io
 
+# Only import cryptography and pycryptodome if available, otherwise show a warning.
 try:
     from Crypto.Cipher import AES
     from Crypto.Random import get_random_bytes
     from Crypto.PublicKey import RSA
     from Crypto.Cipher import PKCS1_OAEP
     from Crypto.Random.random import getrandbits
-except ImportError:
-    st.error("PyCryptodome is not installed. Please install it with 'pip install pycryptodome'.")
+except ModuleNotFoundError:
+    AES = None
+    get_random_bytes = None
+    RSA = None
+    PKCS1_OAEP = None
+    getrandbits = None
+    st.warning("PyCryptodome is not installed. Some features will not work. Install with: pip install pycryptodome")
 
 try:
     from cryptography.fernet import Fernet
     from cryptography.hazmat.primitives.asymmetric import ec
     from cryptography.hazmat.primitives import serialization, hashes
     from cryptography.hazmat.primitives.asymmetric import padding as asy_padding
-except ImportError:
-    st.error("cryptography is not installed. Please install it with 'pip install cryptography'.")
-
-import hashlib
-import base64
-import io
+except ModuleNotFoundError:
+    Fernet = None
+    ec = None
+    serialization = None
+    hashes = None
+    asy_padding = None
+    st.warning("cryptography is not installed. Some features will not work. Install with: pip install cryptography")
 
 st.set_page_config(page_title="Applied Cryptography Application", layout="wide")
 st.title("Applied Cryptography Application")
