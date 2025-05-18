@@ -509,17 +509,14 @@ elif choice == "Asymmetric Encryption/Decryption":
                 priv_key, pub_key = rsa_generate_keys()
                 st.session_state['rsa_priv_val'] = priv_key.decode()
                 st.session_state['rsa_pub_val'] = pub_key.decode()
-                # Use st.rerun() for Streamlit >= 1.22, fallback for older versions
                 try:
                     st.rerun()
                 except AttributeError:
                     import streamlit as stlib
                     if hasattr(stlib, "experimental_rerun"):
                         stlib.experimental_rerun()
-            st.code(st.session_state['rsa_priv_val'])
         with pub:
             public_key = st.text_area("Public Key (PEM)", height=150, value=st.session_state['rsa_pub_val'], key="rsa_pub_pem")
-            st.code(st.session_state['rsa_pub_val'])
         if st.button("Run RSA"):
             try:
                 if mode == "Encrypt":
