@@ -373,7 +373,7 @@ if choice == "Symmetric Encryption/Decryption":
                 except Exception as e:
                     st.error(str(e))
     with tab2:
-        algo = st.selectbox("Algorithm (File)", ["Block Cipher (XOR)", "Caesar Cipher (multi-key)"])
+        algo = st.selectbox("Algorithm (File)", ["Block Cipher (XOR)", "Caesar Cipher (multi-key)", "Vigenère Cipher"])
         mode = st.radio("Mode (File)", ["Encrypt", "Decrypt"])
         uploaded_file = st.file_uploader("Upload File", type=None)
         if uploaded_file:
@@ -385,7 +385,6 @@ if choice == "Symmetric Encryption/Decryption":
                     else:
                         try:
                             file_bytes = uploaded_file.read()
-                            # decode as text, preserving line breaks
                             text = file_bytes.decode(errors='ignore')
                             if mode == "Encrypt":
                                 out = xor_block_encrypt(text, key)
@@ -413,6 +412,21 @@ if choice == "Symmetric Encryption/Decryption":
                                 out = caesar_encrypt_decrypt(text, shift_keys, ifdecrypt=True)
                             st.download_button("Download Result", data=out.encode(), file_name="result.txt", key="file_caesar_download")
                             st.text_area("File Content Preview", text, height=150, key="file_caesar_preview")
+                    except Exception as e:
+                        st.error(str(e))
+            elif algo == "Vigenère Cipher":
+                alphabet = st.text_input("Alphabet (unique chars, e.g. ZYXWVUTSRQPONMLKJIHGFEDCBA)", value="ZYXWVUTSRQPONMLKJIHGFEDCBA", key="file_vigenere_alphabet")
+                key = st.text_input("Vigenère Key (letters only)", value="KEY", key="file_vigenere_key")
+                if st.button("Run File Crypto", key="file_vigenere_btn"):
+                    try:
+                        file_bytes = uploaded_file.read()
+                        text = file_bytes.decode(errors='ignore')
+                        if mode == "Encrypt":
+                            out = vigenere_encrypt(text, key, alphabet)
+                        else:
+                            out = vigenere_decrypt(text, key, alphabet)
+                        st.download_button("Download Result", data=out.encode(), file_name="result.txt", key="file_vigenere_download")
+                        st.text_area("File Content Preview", text, height=150, key="file_vigenere_preview")
                     except Exception as e:
                         st.error(str(e))
 
