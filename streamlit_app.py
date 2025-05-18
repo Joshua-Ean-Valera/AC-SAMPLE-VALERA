@@ -8,7 +8,12 @@ import io
 # Show Python version at the top of the app
 st.info(f"Python version: {sys.version.split()[0]} (expected 3.11)")
 
-# Only import cryptography and pycryptodome if available, otherwise show a warning.
+# --- Dependency check for PyCryptodome and cryptography ---
+# PyCryptodome is compatible with Python 3.11 as of version 3.17+.
+# If you see "No module named 'Crypto'", you need to install PyCryptodome in your environment.
+# On Streamlit Cloud, add "pycryptodome" to requirements.txt.
+# Locally, run: pip install pycryptodome
+
 try:
     from Crypto.Cipher import AES
     from Crypto.Random import get_random_bytes
@@ -21,7 +26,11 @@ except ModuleNotFoundError:
     RSA = None
     PKCS1_OAEP = None
     getrandbits = None
-    st.warning("PyCryptodome is not installed. Some features will not work. Install with: pip install pycryptodome")
+    st.error(
+        "PyCryptodome is not installed or not available for Python 3.11 in your environment. "
+        "Install it locally with: `pip install pycryptodome` or add `pycryptodome` to your requirements.txt if using Streamlit Cloud. "
+        "PyCryptodome >= 3.17 is required for Python 3.11."
+    )
 
 try:
     from cryptography.fernet import Fernet
