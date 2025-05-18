@@ -244,27 +244,61 @@ def dh_shared_secret_to_aes_key(shared_secret):
     # Derive a 32-byte AES key from shared secret
     return hashlib.sha256(str(shared_secret).encode()).digest()
 
+# --- XOR Block Cipher Implementation (Block size = 8, key = 8 chars) ---
+def pad_message(message, block_size=8, padding_char='_'):
+    padding_length = (block_size - len(message) % block_size) % block_size
+    return message + (padding_char * padding_length)
+
+def remove_padding(message, padding_char='_'):
+    return message.rstrip(padding_char)
+
+def xor_operation(block, key):
+    return [ord(b) ^ ord(k) for b, k in zip(block, key)]
+
+def xor_block_encrypt(text, key):
+    text = pad_message(text)
+    result = []
+    for i in range(0, len(text), 8):
+        block = text[i:i+8]
+        encrypted_block = xor_operation(block, key)
+        result.extend(encrypted_block)
+    return ' '.join(format(byte, '02X') for byte in result)
+
+def xor_block_decrypt(hex_text, key):
+    try:
+        hex_values = [int(h, 16) for h in hex_text.split()]
+    except ValueError:
+        return "Error: Invalid hex input for decryption"
+    result = []
+    for i in range(0, len(hex_values), 8):
+        block = hex_values[i:i+8]
+        decrypted_block = ''.join(chr(b ^ ord(k)) for b, k in zip(block, key))
+        result.append(decrypted_block)
+    return remove_padding(''.join(result))
+
 # --- UI Logic ---
 
 if choice == "Symmetric Encryption/Decryption":
     st.header("Symmetric Encryption/Decryption")
     tab1, tab2 = st.tabs(["Text", "File"])
     with tab1:
-        algo = st.selectbox("Algorithm", ["Block Cipher (AES)", "Stream Cipher (RC4)", "Vigenère Cipher"])
+        algo = st.selectbox("Algorithm", ["Block Cipher (XOR)", "Stream Cipher (RC4)", "Vigenère Cipher"])
         mode = st.radio("Mode", ["Encrypt", "Decrypt"])
         text = st.text_area("Text")
-        if algo == "Block Cipher (AES)":
-            key = st.text_input("Key (16/24/32 bytes)", value="mysecretkey12345")
-            key_bytes = key.encode().ljust(32, b'\0')[:32]
+        if algo == "Block Cipher (XOR)":
+            key = st.text_input("Key (exactly 8 characters)", value="my8chark")
             if st.button("Run"):
-                try:
-                    if mode == "Encrypt":
-                        result = aes_encrypt(key_bytes, text)
-                    else:
-                        result = aes_decrypt(key_bytes, text)
-                    st.code(result)
-                except Exception as e:
-                    st.error(str(e))
+                if len(key) != 8:
+                    st.error("Key must be exactly 8 characters")
+                else:
+                    try:
+                        if mode == "Encrypt":
+                            result = xor_block_encrypt(text, key)
+                        else:
+                            result = xor_block_decrypt(text, key)
+                        st.code(result)
+                    except Exception as e:
+                        st.error(str(e))
         elif algo == "Stream Cipher (RC4)":
             key = st.text_input("RC4 Key (any length)", value="rc4key")
             if st.button("Run"):
