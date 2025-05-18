@@ -50,8 +50,8 @@ st.title("Applied Cryptography Application")
 menu = [
     "Symmetric Encryption/Decryption",
     "Asymmetric Encryption/Decryption",
-    "Hashing",
-    "Algorithm Information"
+    "Hashing Functions",
+    "Algorithm Informations"
 ]
 choice = st.sidebar.selectbox("Navigation", menu)
 
