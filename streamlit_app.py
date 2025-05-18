@@ -1,49 +1,16 @@
 # Joshua Ean
 import streamlit as st
-import sys
+from Crypto.Cipher import AES
+from Crypto.Random import get_random_bytes
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
+from cryptography.hazmat.primitives.asymmetric import ec
+from cryptography.hazmat.primitives import serialization, hashes
+from cryptography.hazmat.primitives.asymmetric import padding as asy_padding
 import hashlib
 import base64
 import io
-
-# --- set_page_config must be the first Streamlit command ---
-st.set_page_config(page_title="Applied Cryptography Application", layout="wide")
-
-# --- Dependency check for PyCryptodome and cryptography ---
-# PyCryptodome is compatible with Python 3.12 as of version 3.19+.
-# If you see "No module named 'Crypto'", you need to install PyCryptodome in your environment.
-# On Streamlit Cloud, add "pycryptodome" to requirements.txt.
-# Locally, run: pip install pycryptodome
-
-try:
-    from Crypto.Cipher import AES
-    from Crypto.Random import get_random_bytes
-    from Crypto.PublicKey import RSA
-    from Crypto.Cipher import PKCS1_OAEP
-    from Crypto.Random.random import getrandbits
-except ModuleNotFoundError:
-    AES = None
-    get_random_bytes = None
-    RSA = None
-    PKCS1_OAEP = None
-    getrandbits = None
-    st.error(
-        "PyCryptodome is not installed or not available for Python 3.12 in your environment. "
-        "Install it locally with: `pip install pycryptodome` or add `pycryptodome` to your requirements.txt if using Streamlit Cloud. "
-        "PyCryptodome >= 3.19 is required for Python 3.12."
-    )
-
-try:
-    from cryptography.fernet import Fernet
-    from cryptography.hazmat.primitives.asymmetric import ec
-    from cryptography.hazmat.primitives import serialization, hashes
-    from cryptography.hazmat.primitives.asymmetric import padding as asy_padding
-except ModuleNotFoundError:
-    Fernet = None
-    ec = None
-    serialization = None
-    hashes = None
-    asy_padding = None
-    st.warning("cryptography is not installed. Some features will not work. Install with: pip install cryptography")
+from Crypto.Random.random import getrandbits
 
 st.title("Applied Cryptography Application")
 
