@@ -276,13 +276,30 @@ def xor_block_decrypt(hex_text, key):
         result.append(decrypted_block)
     return remove_padding(''.join(result))
 
+# --- Caesar Cipher (multi-key) Implementation ---
+def caesar_encrypt_decrypt(text, shift_keys, ifdecrypt):
+    """
+    Encrypts or decrypts text using Caesar Cipher with a list of shift keys.
+    """
+    result = []
+    shift_keys_len = len(shift_keys)
+    for i, char in enumerate(text):
+        if 32 <= ord(char) <= 126:
+            shift = shift_keys[i % shift_keys_len]
+            effective_shift = -shift if ifdecrypt else shift
+            shifted_char = chr((ord(char) - 32 + effective_shift) % 94 + 32)
+            result.append(shifted_char)
+        else:
+            result.append(char)
+    return ''.join(result)
+
 # --- UI Logic ---
 
 if choice == "Symmetric Encryption/Decryption":
     st.header("Symmetric Encryption/Decryption")
     tab1, tab2 = st.tabs(["Text", "File"])
     with tab1:
-        algo = st.selectbox("Algorithm", ["Block Cipher (XOR)", "Stream Cipher (RC4)", "Vigenère Cipher"])
+        algo = st.selectbox("Algorithm", ["Block Cipher (XOR)", "Caesar Cipher (multi-key)", "Vigenère Cipher"])
         mode = st.radio("Mode", ["Encrypt", "Decrypt"])
         text = st.text_area("Text")
         if algo == "Block Cipher (XOR)":
@@ -299,18 +316,24 @@ if choice == "Symmetric Encryption/Decryption":
                         st.code(result)
                     except Exception as e:
                         st.error(str(e))
-        elif algo == "Stream Cipher (RC4)":
-            key = st.text_input("RC4 Key (any length)", value="rc4key")
+        elif algo == "Caesar Cipher (multi-key)":
+            shift_keys_str = st.text_input("Shift Keys (space-separated integers)", value="3 1 4")
+            try:
+                shift_keys = list(map(int, shift_keys_str.strip().split()))
+            except Exception:
+                shift_keys = []
             if st.button("Run"):
-                try:
-                    if mode == "Encrypt":
-                        result = base64.b64encode(rc4(key, text).encode()).decode()
-                    else:
-                        # decode from base64 before decrypting
-                        result = rc4(key, base64.b64decode(text).decode())
-                    st.code(result)
-                except Exception as e:
-                    st.error(str(e))
+                if len(shift_keys) < 2 or len(shift_keys) > len(text):
+                    st.error("Shift keys length must be between 2 and the length of the text.")
+                else:
+                    try:
+                        if mode == "Encrypt":
+                            result = caesar_encrypt_decrypt(text, shift_keys, ifdecrypt=False)
+                        else:
+                            result = caesar_encrypt_decrypt(text, shift_keys, ifdecrypt=True)
+                        st.code(result)
+                    except Exception as e:
+                        st.error(str(e))
         elif algo == "Vigenère Cipher":
             alphabet = st.text_input("Alphabet (unique chars, e.g. ZYXWVUTSRQPONMLKJIHGFEDCBA)", value="ZYXWVUTSRQPONMLKJIHGFEDCBA")
             key = st.text_input("Vigenère Key (letters only)", value="KEY")
