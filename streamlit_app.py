@@ -277,11 +277,14 @@ def xor_block_decrypt(hex_text, key):
     return remove_padding(''.join(result))
 
 # --- Caesar Cipher (multi-key) Implementation ---
-def caesar_encrypt_decrypt(text, shift_keys, ifdecrypt):
+def caesar_encrypt_decrypt(text, shift_keys, ifdecrypt, show_report=False):
     """
     Encrypts or decrypts text using Caesar Cipher with a list of shift keys.
+    If show_report is True, returns (result_string, report_string).
+    Otherwise, returns result_string.
     """
     result = []
+    report_lines = []
     shift_keys_len = len(shift_keys)
     for i, char in enumerate(text):
         if 32 <= ord(char) <= 126:
@@ -289,9 +292,17 @@ def caesar_encrypt_decrypt(text, shift_keys, ifdecrypt):
             effective_shift = -shift if ifdecrypt else shift
             shifted_char = chr((ord(char) - 32 + effective_shift) % 94 + 32)
             result.append(shifted_char)
+            if show_report:
+                report_lines.append(f"{i} {char} {shift} {shifted_char}")
         else:
             result.append(char)
-    return ''.join(result)
+            if show_report:
+                report_lines.append(f"{i} {char} (no shift) {char}")
+    if show_report:
+        report_lines.append("----------")
+        return ''.join(result), '\n'.join(report_lines)
+    else:
+        return ''.join(result)
 
 # --- UI Logic ---
 
@@ -328,10 +339,17 @@ if choice == "Symmetric Encryption/Decryption":
                 else:
                     try:
                         if mode == "Encrypt":
-                            result = caesar_encrypt_decrypt(text, shift_keys, ifdecrypt=False)
+                            cipher_text, enc_report = caesar_encrypt_decrypt(text, shift_keys, ifdecrypt=False, show_report=True)
+                            decrypted_text, dec_report = caesar_encrypt_decrypt(cipher_text, shift_keys, ifdecrypt=True, show_report=True)
                         else:
-                            result = caesar_encrypt_decrypt(text, shift_keys, ifdecrypt=True)
-                        st.code(result)
+                            cipher_text, enc_report = caesar_encrypt_decrypt(text, shift_keys, ifdecrypt=True, show_report=True)
+                            decrypted_text, dec_report = caesar_encrypt_decrypt(cipher_text, shift_keys, ifdecrypt=False, show_report=True)
+                        st.text(enc_report)
+                        st.text(dec_report)
+                        st.markdown(f"**Text:** {text}")
+                        st.markdown(f"**Shift keys:** {' '.join(map(str, shift_keys))}")
+                        st.markdown(f"**Cipher:** {cipher_text}")
+                        st.markdown(f"**Decrypted text:** {decrypted_text}")
                     except Exception as e:
                         st.error(str(e))
         elif algo == "Vigenère Cipher":
