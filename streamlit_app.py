@@ -580,10 +580,9 @@ elif choice == "Hashing Functions":
                 result = hash_file(uploaded_file, algo)
                 st.code(result)
                 st.download_button(
-                    label="Download Hash Result",
+                    "Download Result",
                     data=result.encode(),
                     file_name="hash_result.txt",
-                    mime="text/plain",
                     key="hash_file_download"
                 )
             except Exception as e:
