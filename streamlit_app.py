@@ -5,9 +5,8 @@ import hashlib
 import base64
 import io
 
-# Show Python version at the top of the app
-st.info(f"Python version: {sys.version.split()[0]} (expected 3.12)")
-
+# --- set_page_config must be the first Streamlit command ---
+st.set_page_config(page_title="Applied Cryptography Application", layout="wide")
 
 # --- Dependency check for PyCryptodome and cryptography ---
 # PyCryptodome is compatible with Python 3.12 as of version 3.19+.
@@ -46,7 +45,6 @@ except ModuleNotFoundError:
     asy_padding = None
     st.warning("cryptography is not installed. Some features will not work. Install with: pip install cryptography")
 
-st.set_page_config(page_title="Applied Cryptography Application", layout="wide")
 st.title("Applied Cryptography Application")
 
 menu = [
