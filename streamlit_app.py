@@ -6,10 +6,11 @@ import base64
 import io
 
 # Show Python version at the top of the app
-st.info(f"Python version: {sys.version.split()[0]} (expected 3.11)")
+st.info(f"Python version: {sys.version.split()[0]} (expected 3.12)")
+
 
 # --- Dependency check for PyCryptodome and cryptography ---
-# PyCryptodome is compatible with Python 3.11 as of version 3.17+.
+# PyCryptodome is compatible with Python 3.12 as of version 3.19+.
 # If you see "No module named 'Crypto'", you need to install PyCryptodome in your environment.
 # On Streamlit Cloud, add "pycryptodome" to requirements.txt.
 # Locally, run: pip install pycryptodome
@@ -27,9 +28,9 @@ except ModuleNotFoundError:
     PKCS1_OAEP = None
     getrandbits = None
     st.error(
-        "PyCryptodome is not installed or not available for Python 3.11 in your environment. "
+        "PyCryptodome is not installed or not available for Python 3.12 in your environment. "
         "Install it locally with: `pip install pycryptodome` or add `pycryptodome` to your requirements.txt if using Streamlit Cloud. "
-        "PyCryptodome >= 3.17 is required for Python 3.11."
+        "PyCryptodome >= 3.19 is required for Python 3.12."
     )
 
 try:
