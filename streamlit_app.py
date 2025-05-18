@@ -366,6 +366,19 @@ def rsa_str_to_cipher(cipher_str):
     except Exception:
         return []
 
+# --- Diffie-Hellman Implementation (simple, small primes, educational) ---
+def dh_power(a, b, p):
+    # Returns a^b mod p
+    return pow(a, b, p)
+
+def dh_demo_generate_keys(P, G, a, b):
+    # Returns (x, y, ka, kb)
+    x = dh_power(G, a, P)
+    y = dh_power(G, b, P)
+    ka = dh_power(y, a, P)
+    kb = dh_power(x, b, P)
+    return x, y, ka, kb
+
 # --- UI Logic ---
 
 if choice == "Symmetric Encryption/Decryption":
@@ -527,40 +540,26 @@ elif choice == "Asymmetric Encryption/Decryption":
             except Exception as e:
                 st.error(str(e))
     elif algo == "Diffie-Hellman":
-        st.markdown("#### Diffie-Hellman Key Exchange (for demonstration, uses AES for encryption with shared secret)")
-        p, g = dh_generate_params()
-        st.code(f"p = {p}\ng = {g}")
-        col1, col2 = st.columns(2)
-        with col1:
-            priv1 = st.text_input("Your Private Key (leave blank to generate)", value="")
-            if st.button("Generate My Private Key"):
-                priv1 = str(dh_generate_private_key(p))
-                st.code(priv1)
-            pub1 = st.text_input("Your Public Key", value="")
-            if st.button("Compute My Public Key"):
-                if priv1:
-                    pub1 = str(dh_generate_public_key(g, int(priv1), p))
-                    st.code(pub1)
-        with col2:
-            peer_pub = st.text_input("Peer's Public Key", value="")
-        shared_secret = None
-        if priv1 and peer_pub:
-            try:
-                shared_secret = dh_compute_shared_secret(int(peer_pub), int(priv1), p)
-                st.success(f"Shared Secret: {shared_secret}")
-            except Exception as e:
-                st.error(str(e))
-        if shared_secret:
-            aes_key = dh_shared_secret_to_aes_key(shared_secret)
-            if st.button("Run DH AES Crypto"):
-                try:
-                    if mode == "Encrypt":
-                        result = aes_encrypt(aes_key, text)
-                    else:
-                        result = aes_decrypt(aes_key, text)
-                    st.code(result)
-                except Exception as e:
-                    st.error(str(e))
+        st.markdown("#### Diffie-Hellman Key Exchange (educational, small primes)")
+        # Default values for demonstration
+        P = st.number_input("Prime number P", min_value=3, value=23, step=1)
+        G = st.number_input("Primitive root G", min_value=2, value=9, step=1)
+        a = st.number_input("Alice's private key (a)", min_value=1, value=4, step=1)
+        b = st.number_input("Bob's private key (b)", min_value=1, value=3, step=1)
+        if st.button("Run DH Demo"):
+            x, y, ka, kb = dh_demo_generate_keys(P, G, a, b)
+            st.markdown(f"**The value of P:** {P}")
+            st.markdown(f"**The value of G:** {G}")
+            st.markdown(f"**The private key a for Alice:** {a}")
+            st.markdown(f"**The private key b for Bob:** {b}")
+            st.markdown(f"**Alice computes:** x = G^a mod P = {G}^{a} mod {P} = {x}")
+            st.markdown(f"**Bob computes:** y = G^b mod P = {G}^{b} mod {P} = {y}")
+            st.markdown(f"**Alice computes secret key:** ka = y^a mod P = {y}^{a} mod {P} = {ka}")
+            st.markdown(f"**Bob computes secret key:** kb = x^b mod P = {x}^{b} mod {P} = {kb}")
+            if ka == kb:
+                st.success(f"Shared secret established: {ka}")
+            else:
+                st.error("Shared secrets do not match!")
 
 elif choice == "Hashing":
     st.header("Hashing")
