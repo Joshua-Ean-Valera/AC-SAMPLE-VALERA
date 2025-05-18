@@ -577,8 +577,13 @@ elif choice == "Hashing Functions":
         uploaded_file = st.file_uploader("Upload File for Hashing", type=None, key="hashfile")
         if uploaded_file and st.button("Hash File"):
             try:
+                # Preview file content (first 500 chars for safety)
+                file_bytes = uploaded_file.read()
+                preview_text = file_bytes[:500].decode(errors="ignore")
+                st.text_area("File Content Preview", preview_text, height=150, key="hash_file_preview")
+                uploaded_file.seek(0)
                 result = hash_file(uploaded_file, algo)
-                st.code(result)
+                #st.code(result)
                 st.download_button(
                     "Download Result",
                     data=result.encode(),
