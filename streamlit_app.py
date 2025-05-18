@@ -279,7 +279,7 @@ if choice == "Symmetric Encryption/Decryption":
                     st.error(str(e))
         elif algo == "Vigenère Cipher":
             key = st.text_input("Vigenère Key (letters only)", value="KEY")
-            alphabet = st.text_input("Alphabet (unique chars, e.g. ABCDEFGHIJKLMNOPQRSTUVWXYZ)", value="ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+            alphabet = st.text_input("Alphabet (unique chars, e.g. ZYXWVUTSRQPONMLKJIHGFEDCBA)", value="ZYXWVUTSRQPONMLKJIHGFEDCBA")
             if st.button("Run"):
                 try:
                     if mode == "Encrypt":
