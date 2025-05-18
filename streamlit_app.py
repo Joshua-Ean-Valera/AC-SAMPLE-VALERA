@@ -373,34 +373,48 @@ if choice == "Symmetric Encryption/Decryption":
                 except Exception as e:
                     st.error(str(e))
     with tab2:
-        algo = st.selectbox("Algorithm (File)", ["Block Cipher (AES)", "Stream Cipher (RC4)"])
+        algo = st.selectbox("Algorithm (File)", ["Block Cipher (XOR)", "Caesar Cipher (multi-key)"])
         mode = st.radio("Mode (File)", ["Encrypt", "Decrypt"])
         uploaded_file = st.file_uploader("Upload File", type=None)
         if uploaded_file:
-            key = st.text_input("Key", value="filekey123456789")
-            if st.button("Run File Crypto"):
+            if algo == "Block Cipher (XOR)":
+                key = st.text_input("Key (exactly 8 characters)", value="my8chark")
+                if st.button("Run File Crypto"):
+                    if len(key) != 8:
+                        st.error("Key must be exactly 8 characters")
+                    else:
+                        try:
+                            file_bytes = uploaded_file.read()
+                            text = file_bytes.decode(errors='ignore')
+                            if mode == "Encrypt":
+                                out = xor_block_encrypt(text, key)
+                                out_bytes = out.encode()
+                            else:
+                                out = xor_block_decrypt(text, key)
+                                out_bytes = out.encode()
+                            st.download_button("Download Result", data=out_bytes, file_name="result.txt")
+                        except Exception as e:
+                            st.error(str(e))
+            elif algo == "Caesar Cipher (multi-key)":
+                shift_keys_str = st.text_input("Shift Keys (space-separated integers)", value="3 1 4")
                 try:
-                    file_bytes = uploaded_file.read()
-                    if algo == "Block Cipher (AES)":
-                        key_bytes = key.encode().ljust(32, b'\0')[:32]
-                        if mode == "Encrypt":
-                            cipher = AES.new(key_bytes, AES.MODE_CBC)
-                            ct_bytes = cipher.encrypt(pad(file_bytes.decode(errors='ignore'), AES.block_size).encode())
-                            out = cipher.iv + ct_bytes
+                    shift_keys = list(map(int, shift_keys_str.strip().split()))
+                except Exception:
+                    shift_keys = []
+                if st.button("Run File Crypto"):
+                    try:
+                        file_bytes = uploaded_file.read()
+                        text = file_bytes.decode(errors='ignore')
+                        if len(shift_keys) < 2 or len(shift_keys) > len(text):
+                            st.error("Shift keys length must be between 2 and the length of the file content.")
                         else:
-                            iv = file_bytes[:AES.block_size]
-                            ct = file_bytes[AES.block_size:]
-                            cipher = AES.new(key_bytes, AES.MODE_CBC, iv)
-                            pt = cipher.decrypt(ct)
-                            out = pt
-                    elif algo == "Stream Cipher (RC4)":
-                        if mode == "Encrypt":
-                            out = rc4(key, file_bytes.decode(errors='ignore')).encode()
-                        else:
-                            out = rc4(key, file_bytes.decode(errors='ignore')).encode()
-                    st.download_button("Download Result", data=out, file_name="result.bin")
-                except Exception as e:
-                    st.error(str(e))
+                            if mode == "Encrypt":
+                                out = caesar_encrypt_decrypt(text, shift_keys, ifdecrypt=False)
+                            else:
+                                out = caesar_encrypt_decrypt(text, shift_keys, ifdecrypt=True)
+                            st.download_button("Download Result", data=out.encode(), file_name="result.txt")
+                    except Exception as e:
+                        st.error(str(e))
 
 elif choice == "Asymmetric Encryption/Decryption":
     st.header("Asymmetric Encryption/Decryption")
