@@ -500,13 +500,20 @@ elif choice == "Asymmetric Encryption/Decryption":
     if algo == "RSA (PyCryptodome)":
         priv, pub = st.columns(2)
         with priv:
-            private_key = st.text_area("Private Key (PEM)", height=150)
+            if 'rsa_priv_val' not in st.session_state:
+                st.session_state['rsa_priv_val'] = ""
+            if 'rsa_pub_val' not in st.session_state:
+                st.session_state['rsa_pub_val'] = ""
+            private_key = st.text_area("Private Key (PEM)", height=150, value=st.session_state['rsa_priv_val'], key="rsa_priv_pem")
             if st.button("Generate RSA Keys"):
                 priv_key, pub_key = rsa_generate_keys()
-                st.code(priv_key.decode())
-                st.code(pub_key.decode())
+                st.session_state['rsa_priv_val'] = priv_key.decode()
+                st.session_state['rsa_pub_val'] = pub_key.decode()
+                st.experimental_rerun()
+            st.code(st.session_state['rsa_priv_val'])
         with pub:
-            public_key = st.text_area("Public Key (PEM)", height=150)
+            public_key = st.text_area("Public Key (PEM)", height=150, value=st.session_state['rsa_pub_val'], key="rsa_pub_pem")
+            st.code(st.session_state['rsa_pub_val'])
         if st.button("Run RSA"):
             try:
                 if mode == "Encrypt":
