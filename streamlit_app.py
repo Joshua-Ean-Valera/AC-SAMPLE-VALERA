@@ -385,6 +385,7 @@ if choice == "Symmetric Encryption/Decryption":
                     else:
                         try:
                             file_bytes = uploaded_file.read()
+                            # decode as text, preserving line breaks
                             text = file_bytes.decode(errors='ignore')
                             if mode == "Encrypt":
                                 out = xor_block_encrypt(text, key)
@@ -393,6 +394,7 @@ if choice == "Symmetric Encryption/Decryption":
                                 out = xor_block_decrypt(text, key)
                                 out_bytes = out.encode()
                             st.download_button("Download Result", data=out_bytes, file_name="result.txt")
+                            st.text_area("File Content Preview", text, height=150)
                         except Exception as e:
                             st.error(str(e))
             elif algo == "Caesar Cipher (multi-key)":
