@@ -100,7 +100,7 @@ Below are text-based output examples for each algorithm's functionality.
 **Key:** `mysecretkey12345`  
 **Encrypted Output:**
 ```
-b2Qk5k8w9nJ1vQ8f1Qw9kQ==
+RkZmCbdq39zdhvDtIwhppiAglUi5EN5OTSaB87Re0cw=
 ```
 **Decrypted Output:**
 ```
@@ -113,7 +113,7 @@ Hello, World!
 **Key:** `rc4key`  
 **Encrypted Output:**
 ```
-Qw8fXxwZVh8d
+wqXDlkYSw7AqFWTCgMObw5RYeA==
 ```
 **Decrypted Output:**
 ```
@@ -126,7 +126,7 @@ SecretMessage
 **Key:** `KEY`  
 **Encrypted Output:**
 ```
-MVIHSSKXCMZC
+MVWZXMQVYZLW
 ```
 **Decrypted Output:**
 ```

@@ -66,36 +66,92 @@ def rc4(key, data):
         out.append(chr(ord(char) ^ K))
     return ''.join(out)
 
-# --- Vigenère Cipher Implementation ---
-def vigenere_encrypt(plaintext, key):
-    key = key.upper()
-    ciphertext = ""
+# --- Vigenère Cipher Implementation (with custom alphabet, ignores spaces) ---
+def vigenere_encrypt(plaintext, key, alphabet):
+    """
+    Encrypts plaintext using a Vigenère cipher with a custom alphabet, ignoring spaces during encryption.
+    Spaces are preserved in their original positions.
+    """
+    if len(alphabet) == 0:
+        raise ValueError("ValueError: Alphabet cannot be empty")
+    if len(set(alphabet)) != len(alphabet):
+        raise ValueError("ValueError: Alphabet must contain unique characters")
+    if len(key) == 0:
+        raise ValueError("ValueError: Key cannot be empty")
+    if len(plaintext) == 0:
+        raise ValueError("ValueError: Plaintext cannot be empty")
+    alphabet_set = set(alphabet)
+    invalid_plain = sorted({c for c in plaintext if c not in alphabet_set and c != ' '})
+    invalid_key = sorted({c for c in key if c not in alphabet_set})
+    if invalid_plain or invalid_key:
+        part = ["Invalid characters!"]
+        if invalid_plain:
+            part.append(f"in plaintext: {', '.join(invalid_plain)}")
+        if invalid_key:
+            part.append(f"in key: {', '.join(invalid_key)}")
+        total_invalid = len(invalid_plain) + len(invalid_key)
+        ending = "is not in alphabet" if total_invalid == 1 else "are not in alphabet"
+        part.append(ending)
+        message = '\n'.join(part)
+        raise ValueError(message)
+    filtered_plaintext = ''.join([c for c in plaintext if c != ' '])
+    extended_key = ''.join([key[i % len(key)] for i in range(len(filtered_plaintext))])
+    char_to_index = {char: idx for idx, char in enumerate(alphabet)}
+    ciphertext = []
     key_index = 0
-    for char in plaintext:
-        if char.isalpha():
-            offset = 65 if char.isupper() else 97
-            k = ord(key[key_index % len(key)]) - 65
-            c = chr((ord(char) - offset + k) % 26 + offset)
-            ciphertext += c
-            key_index += 1
+    for p_char in plaintext:
+        if p_char == ' ':
+            ciphertext.append(' ')
         else:
-            ciphertext += char
-    return ciphertext
+            p_val = char_to_index[p_char]
+            k_val = char_to_index[extended_key[key_index]]
+            c_val = (p_val + k_val) % len(alphabet)
+            ciphertext.append(alphabet[c_val])
+            key_index += 1
+    return ''.join(ciphertext)
 
-def vigenere_decrypt(ciphertext, key):
-    key = key.upper()
-    plaintext = ""
+def vigenere_decrypt(ciphertext, key, alphabet):
+    """
+    Decrypts ciphertext using a Vigenère cipher with a custom alphabet, ignoring spaces during decryption.
+    Spaces are preserved in their original positions.
+    """
+    if len(alphabet) == 0:
+        raise ValueError("ValueError: Alphabet cannot be empty")
+    if len(set(alphabet)) != len(alphabet):
+        raise ValueError("ValueError: Alphabet must contain unique characters")
+    if len(key) == 0:
+        raise ValueError("ValueError: Key cannot be empty")
+    if len(ciphertext) == 0:
+        raise ValueError("ValueError: Ciphertext cannot be empty")
+    alphabet_set = set(alphabet)
+    invalid_cipher = sorted({c for c in ciphertext if c not in alphabet_set and c != ' '})
+    invalid_key = sorted({c for c in key if c not in alphabet_set})
+    if invalid_cipher or invalid_key:
+        part = ["Invalid characters!"]
+        if invalid_cipher:
+            part.append(f"in ciphertext: {', '.join(invalid_cipher)}")
+        if invalid_key:
+            part.append(f"in key: {', '.join(invalid_key)}")
+        total_invalid = len(invalid_cipher) + len(invalid_key)
+        ending = "is not in alphabet" if total_invalid == 1 else "are not in alphabet"
+        part.append(ending)
+        message = '\n'.join(part)
+        raise ValueError(message)
+    filtered_ciphertext = ''.join([c for c in ciphertext if c != ' '])
+    extended_key = ''.join([key[i % len(key)] for i in range(len(filtered_ciphertext))])
+    char_to_index = {char: idx for idx, char in enumerate(alphabet)}
+    plaintext = []
     key_index = 0
-    for char in ciphertext:
-        if char.isalpha():
-            offset = 65 if char.isupper() else 97
-            k = ord(key[key_index % len(key)]) - 65
-            p = chr((ord(char) - offset - k) % 26 + offset)
-            plaintext += p
-            key_index += 1
+    for c_char in ciphertext:
+        if c_char == ' ':
+            plaintext.append(' ')
         else:
-            plaintext += char
-    return plaintext
+            c_val = char_to_index[c_char]
+            k_val = char_to_index[extended_key[key_index]]
+            p_val = (c_val - k_val) % len(alphabet)
+            plaintext.append(alphabet[p_val])
+            key_index += 1
+    return ''.join(plaintext)
 
 def rsa_generate_keys():
     key = RSA.generate(2048)
@@ -223,12 +279,13 @@ if choice == "Symmetric Encryption/Decryption":
                     st.error(str(e))
         elif algo == "Vigenère Cipher":
             key = st.text_input("Vigenère Key (letters only)", value="KEY")
+            alphabet = st.text_input("Alphabet (unique chars, e.g. ABCDEFGHIJKLMNOPQRSTUVWXYZ)", value="ABCDEFGHIJKLMNOPQRSTUVWXYZ")
             if st.button("Run"):
                 try:
                     if mode == "Encrypt":
-                        result = vigenere_encrypt(text, key)
+                        result = vigenere_encrypt(text, key, alphabet)
                     else:
-                        result = vigenere_decrypt(text, key)
+                        result = vigenere_decrypt(text, key, alphabet)
                     st.code(result)
                 except Exception as e:
                     st.error(str(e))
