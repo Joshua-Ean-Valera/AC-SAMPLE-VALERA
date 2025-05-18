@@ -593,7 +593,7 @@ elif choice == "Asymmetric Encryption/Decryption":
             else:
                 st.error("Shared secrets do not match!")
 
-elif choice == "Hashing":
+elif choice == "Hashing Functions":
     st.header("Hashing")
     tab1, tab2 = st.tabs(["Text", "File"])
     with tab1:
@@ -615,7 +615,7 @@ elif choice == "Hashing":
             except Exception as e:
                 st.error(str(e))
 
-elif choice == "Algorithm Information":
+elif choice == "Algorithm Informations":
     st.header("Algorithm Information")
     st.subheader("Symmetric Algorithms")
     st.markdown("""
