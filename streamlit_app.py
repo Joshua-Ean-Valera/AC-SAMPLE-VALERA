@@ -359,16 +359,30 @@ if choice == "Symmetric Encryption/Decryption":
                             decrypted_text, dec_report = caesar_encrypt_decrypt(cipher_text, shift_keys, ifdecrypt=False, show_report=True)
                             enc_title = "Decryption Steps"
                             dec_title = "Encryption Steps (Re-Encrypt)"
-                        # Present results in a more readable, styled way
-                        st.markdown(f"### {enc_title}")
-                        st.markdown(f"<pre style='background:#f6f8fa;border-radius:6px;padding:10px'>{enc_report}</pre>", unsafe_allow_html=True)
-                        st.markdown(f"### {dec_title}")
-                        st.markdown(f"<pre style='background:#f6f8fa;border-radius:6px;padding:10px'>{dec_report}</pre>", unsafe_allow_html=True)
+                        # Enhanced visual presentation for Caesar Cipher steps
+                        st.markdown(
+                            f"<div style='display:flex;gap:40px;'>"
+                            f"<div>"
+                            f"<h4 style='color:#2e7dba'>{enc_title}</h4>"
+                            f"<pre style='background:#f6f8fa;border-radius:8px;padding:12px;font-size:16px;line-height:2.1;margin-bottom:10px;overflow-x:auto;'>{enc_report}</pre>"
+                            f"</div>"
+                            f"<div>"
+                            f"<h4 style='color:#2e7dba'>{dec_title}</h4>"
+                            f"<pre style='background:#f6f8fa;border-radius:8px;padding:12px;font-size:16px;line-height:2.1;margin-bottom:10px;overflow-x:auto;'>{dec_report}</pre>"
+                            f"</div>"
+                            f"</div>",
+                            unsafe_allow_html=True
+                        )
                         st.markdown("---")
-                        st.markdown(f"<b>Text:</b> <code>{text}</code>", unsafe_allow_html=True)
-                        st.markdown(f"<b>Shift keys:</b> <code>{' '.join(map(str, shift_keys))}</code>", unsafe_allow_html=True)
-                        st.markdown(f"<b>Cipher:</b> <code>{cipher_text}</code>", unsafe_allow_html=True)
-                        st.markdown(f"<b>Decrypted text:</b> <code>{decrypted_text}</code>", unsafe_allow_html=True)
+                        st.markdown(
+                            f"<div style='background:#e3f2fd;border-radius:8px;padding:12px;margin-bottom:10px;'>"
+                            f"<b>Text:</b> <code style='color:#1565c0'>{text}</code><br>"
+                            f"<b>Shift keys:</b> <code style='color:#1565c0'>{' '.join(map(str, shift_keys))}</code><br>"
+                            f"<b>Cipher:</b> <code style='color:#1565c0'>{cipher_text}</code><br>"
+                            f"<b>Decrypted text:</b> <code style='color:#1565c0'>{decrypted_text}</code>"
+                            f"</div>",
+                            unsafe_allow_html=True
+                        )
                     except Exception as e:
                         st.error(str(e))
         elif algo == "Vigenère Cipher":
