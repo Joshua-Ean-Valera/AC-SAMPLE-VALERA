@@ -354,8 +354,9 @@ if choice == "Symmetric Encryption/Decryption":
                         else:
                             result, steps = xor_block_decrypt(text, key, show_steps=True)
                         st.code(result)
-                        st.markdown("#### Step-by-step process")
-                        st.code(steps)
+                        if steps:
+                            st.markdown("#### Step-by-step process")
+                            st.code(steps)
                     except Exception as e:
                         st.error(str(e))
         elif algo == "Caesar Cipher (multi-key)":
@@ -438,8 +439,9 @@ if choice == "Symmetric Encryption/Decryption":
                                 out_bytes = out.encode()
                             st.download_button("Download Result", data=out_bytes, file_name="Block_Cipher_Result.txt", key="file_xor_download")
                             st.text_area("File Content Preview", text, height=150, key="file_xor_preview")
-                            st.markdown("#### Step-by-step process")
-                            st.code(steps)
+                            if steps:
+                                st.markdown("#### Step-by-step process")
+                                st.code(steps)
                         except Exception as e:
                             st.error(str(e))
             elif algo == "Caesar Cipher (multi-key)":
