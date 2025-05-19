@@ -47,26 +47,6 @@ def aes_decrypt(key, ciphertext):
     pt = cipher.decrypt(ct).decode()
     return unpad(pt)
 
-# --- RC4 Stream Cipher Implementation ---
-def rc4(key, data):
-    S = list(range(256))
-    j = 0
-    out = []
-    key = [ord(c) for c in key]
-    # KSA Phase
-    for i in range(256):
-        j = (j + S[i] + key[i % len(key)]) % 256
-        S[i], S[j] = S[j], S[i]
-    # PRGA Phase
-    i = j = 0
-    for char in data:
-        i = (i + 1) % 256
-        j = (j + S[i]) % 256
-        S[i], S[j] = S[j], S[i]
-        K = S[(S[i] + S[j]) % 256]
-        out.append(chr(ord(char) ^ K))
-    return ''.join(out)
-
 # --- Vigenère Cipher Implementation (with custom alphabet, ignores spaces) ---
 def vigenere_encrypt(plaintext, key, alphabet):
     """
