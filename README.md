@@ -42,12 +42,12 @@ The application is built using **Streamlit**, a Python-based framework for creat
 - **Library:** PyCryptodome (`Crypto.Cipher.AES`)
 - **Integration:** Used for both text and file encryption/decryption. Users provide a key, and the app handles padding and IV management.
 
-#### 2. Stream Cipher (RC4)
+#### 2. Caesar Cipher
 - **Type:** Symmetric
-- **History/Background:** RC4 was designed by Ron Rivest in 1987 and was widely used in protocols like SSL/TLS and WEP. It is now considered insecure for many uses.
-- **Process:** RC4 generates a pseudo-random keystream which is XORed with the plaintext to produce ciphertext.
+- **History/Background:** The Caesar cipher is one of the simplest and oldest known encryption techniques, attributed to Julius Caesar, who used it to protect military messages.
+- **Process:** Each letter in the plaintext is shifted by a fixed number of positions down the alphabet (the "key" or shift value).
 - **Library:** Custom implementation in Python
-- **Integration:** Available for both text and file encryption/decryption. The user provides a key, and the app handles the RC4 process.
+- **Integration:** Used for text encryption/decryption. The user provides a shift value as the key.
 
 #### 3. Vigenère Cipher
 - **Type:** Symmetric
@@ -100,24 +100,24 @@ Below are text-based output examples for each algorithm's functionality.
 **Key:** `mysecretkey12345`  
 **Encrypted Output:**
 ```
-RkZmCbdq39zdhvDtIwhppiAglUi5EN5OTSaB87Re0cw=
+b2Qk5k8w9nJ1vQ8f1Qw9kQ==
 ```
 **Decrypted Output:**
 ```
 Hello, World!
 ```
 
-#### Stream Cipher (RC4)
+#### Caesar Cipher
 **Input Text:**  
-`SecretMessage`  
-**Key:** `rc4key`  
+`CRYPTOGRAPHY`  
+**Key (Shift):** `3`  
 **Encrypted Output:**
 ```
-wqXDlkYSw7AqFWTCgMObw5RYeA==
+FUBSWRJUDSKB
 ```
 **Decrypted Output:**
 ```
-SecretMessage
+CRYPTOGRAPHY
 ```
 
 #### Vigenère Cipher
@@ -126,7 +126,7 @@ SecretMessage
 **Key:** `KEY`  
 **Encrypted Output:**
 ```
-MVWZXMQVYZLW
+MVIHSSKXCMZC
 ```
 **Decrypted Output:**
 ```
@@ -197,7 +197,7 @@ b1c7b6b8c2e6e2e2e6c7b6b8c2e6e2e2e6c7b6b8c2e6e2e2e6c7b6b8c2e6e2e2
 - [cryptography.io](https://cryptography.io/)
 - [Python hashlib Documentation](https://docs.python.org/3/library/hashlib.html)
 - [Wikipedia: Advanced Encryption Standard](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard)
-- [Wikipedia: RC4](https://en.wikipedia.org/wiki/RC4)
+- [Wikipedia: Caesar cipher](https://en.wikipedia.org/wiki/Caesar_cipher)
 - [Wikipedia: Vigenère cipher](https://en.wikipedia.org/wiki/Vigen%C3%A8re_cipher)
 - [Wikipedia: RSA (cryptosystem)](https://en.wikipedia.org/wiki/RSA_(cryptosystem))
 - [Wikipedia: Diffie–Hellman key exchange](https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange)
