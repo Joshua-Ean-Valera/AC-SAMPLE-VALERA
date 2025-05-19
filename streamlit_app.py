@@ -172,47 +172,6 @@ def rsa_decrypt(private_key, ciphertext):
     pt = cipher.decrypt(base64.b64decode(ciphertext))
     return pt.decode()
 
-def ecc_generate_keys():
-    private_key = ec.generate_private_key(ec.SECP384R1())
-    public_key = private_key.public_key()
-    priv_bytes = private_key.private_bytes(
-        encoding=serialization.Encoding.PEM,
-        format=serialization.PrivateFormat.PKCS8,
-        encryption_algorithm=serialization.NoEncryption()
-    )
-    pub_bytes = public_key.public_bytes(
-        encoding=serialization.Encoding.PEM,
-        format=serialization.PublicFormat.SubjectPublicKeyInfo
-    )
-    return priv_bytes, pub_bytes
-
-def ecc_encrypt(public_key_pem, plaintext):
-    # ECC is not typically used for direct encryption, but for demonstration, we'll simulate with ECDH + symmetric
-    public_key = serialization.load_pem_public_key(public_key_pem)
-    ephemeral_key = ec.generate_private_key(ec.SECP384R1())
-    shared_key = ephemeral_key.exchange(ec.ECDH(), public_key)
-    aes_key = hashlib.sha256(shared_key).digest()
-    cipher = AES.new(aes_key, AES.MODE_CBC)
-    ct_bytes = cipher.encrypt(pad(plaintext, AES.block_size).encode())
-    return base64.b64encode(cipher.iv + ct_bytes + ephemeral_key.public_key().public_bytes(
-        encoding=serialization.Encoding.PEM,
-        format=serialization.PublicFormat.SubjectPublicKeyInfo
-    )).decode()
-
-def ecc_decrypt(private_key_pem, ciphertext):
-    # Simulate ECC decryption as above
-    raw = base64.b64decode(ciphertext)
-    iv = raw[:AES.block_size]
-    ct = raw[AES.block_size:-215]  # 215 is length of PEM public key for SECP384R1
-    ephemeral_pub_pem = raw[-215:]
-    private_key = serialization.load_pem_private_key(private_key_pem, password=None)
-    ephemeral_pub = serialization.load_pem_public_key(ephemeral_pub_pem)
-    shared_key = private_key.exchange(ec.ECDH(), ephemeral_pub)
-    aes_key = hashlib.sha256(shared_key).digest()
-    cipher = AES.new(aes_key, AES.MODE_CBC, iv)
-    pt = cipher.decrypt(ct).decode()
-    return unpad(pt)
-
 def hash_text(text, algo):
     h = hashlib.new(algo)
     h.update(text.encode())
