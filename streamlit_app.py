@@ -462,7 +462,6 @@ if choice == "Symmetric Encryption/Decryption":
                                 f"Cipher: {cipher_text}\n"
                                 f"Decrypted text: {decrypted_text}\n"
                             )
-                            st.code(result_block)
                             st.download_button("Download Result", data=result_block.encode(), file_name="caesar_result.txt", key="file_caesar_download")
                             st.text_area("File Content Preview", text, height=150, key="file_caesar_preview")
                     except Exception as e:
