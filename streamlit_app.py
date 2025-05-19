@@ -90,6 +90,49 @@ def vigenere_encrypt(plaintext, key, alphabet):
             key_index += 1
     return ''.join(ciphertext)
 
+def vigenere_decrypt(ciphertext, key, alphabet):
+    """
+    Decrypts ciphertext using a Vigenère cipher with a custom alphabet, ignoring spaces during decryption.
+    Spaces are preserved in their original positions.
+    """
+    if len(alphabet) == 0:
+        raise ValueError("ValueError: Alphabet cannot be empty")
+    if len(set(alphabet)) != len(alphabet):
+        raise ValueError("ValueError: Alphabet must contain unique characters")
+    if len(key) == 0:
+        raise ValueError("ValueError: Key cannot be empty")
+    if len(ciphertext) == 0:
+        raise ValueError("ValueError: Ciphertext cannot be empty")
+    alphabet_set = set(alphabet)
+    invalid_cipher = sorted({c for c in ciphertext if c not in alphabet_set and c != ' '})
+    invalid_key = sorted({c for c in key if c not in alphabet_set})
+    if invalid_cipher or invalid_key:
+        part = ["Invalid characters!"]
+        if invalid_cipher:
+            part.append(f"in ciphertext: {', '.join(invalid_cipher)}")
+        if invalid_key:
+            part.append(f"in key: {', '.join(invalid_key)}")
+        total_invalid = len(invalid_cipher) + len(invalid_key)
+        ending = "is not in alphabet" if total_invalid == 1 else "are not in alphabet"
+        part.append(ending)
+        message = '\n'.join(part)
+        raise ValueError(message)
+    filtered_ciphertext = ''.join([c for c in ciphertext if c != ' '])
+    extended_key = ''.join([key[i % len(key)] for i in range(len(filtered_ciphertext))])
+    char_to_index = {char: idx for idx, char in enumerate(alphabet)}
+    plaintext = []
+    key_index = 0
+    for c_char in ciphertext:
+        if c_char == ' ':
+            plaintext.append(' ')
+        else:
+            c_val = char_to_index[c_char]
+            k_val = char_to_index[extended_key[key_index]]
+            p_val = (c_val - k_val) % len(alphabet)
+            plaintext.append(alphabet[p_val])
+            key_index += 1
+    return ''.join(plaintext)
+
 def rsa_generate_keys():
     key = RSA.generate(2048)
     private_key = key.export_key()

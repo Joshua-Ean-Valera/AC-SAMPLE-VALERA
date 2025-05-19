@@ -94,13 +94,13 @@ Below are text-based output examples for each algorithm's functionality.
 
 ### Symmetric Encryption/Decryption
 
-#### Block Cipher (AES)
+#### Block Cipher (XOR)
 **Input Text:**  
 `Hello, World!`  
-**Key:** `mysecretkey12345`  
+**Key:** `password`  
 **Encrypted Output:**
 ```
-b2Qk5k8w9nJ1vQ8f1Qw9kQ==
+38 04 1F 1F 18 43 52 33 1F 13 1F 17 56 30 2D 3B
 ```
 **Decrypted Output:**
 ```
@@ -110,10 +110,10 @@ Hello, World!
 #### Caesar Cipher
 **Input Text:**  
 `CRYPTOGRAPHY`  
-**Key (Shift):** `3`  
+**Key (Shift):** `3 4 5`  
 **Encrypted Output:**
 ```
-FUBSWRJUDSKB
+FV^SXTJVFSL^
 ```
 **Decrypted Output:**
 ```
@@ -124,9 +124,10 @@ CRYPTOGRAPHY
 **Input Text:**  
 `CRYPTOGRAPHY`  
 **Key:** `KEY`  
+**ALPHABET:** `ZYXWVUTSRQPONMLKJIHGFEDCBA`
 **Encrypted Output:**
 ```
-MVIHSSKXCMZC
+NWXAYNRWZAMX
 ```
 **Decrypted Output:**
 ```
@@ -144,7 +145,7 @@ CRYPTOGRAPHY
 `-----BEGIN PUBLIC KEY----- ... -----END PUBLIC KEY-----`  
 **Encrypted Output:**
 ```
-bG9yZW0gaXBzdW0gZG9sb3Igc2l0IGFtZXQ=
+pKluNnjJTEJz9PoDcYreqGhIZzSps2TzY54ZJhWGhEuId8wTGIbSD6DsFsMHw/mZ7iCE7svLi13Q68mQBFcoeUdVXjlqnB7cuAOXp04ke6isjQJlqOgIgMBpbbmDvEabwRiFFoujVYybtwpJu+hb8W4CzoLr5KRSSPUoRMhqbX9kmom13FOym9572rkmT4VVXhGzTFV5UZIyAn8ottgWY2tpJ1Fh+eMsrWaWxTpJ4NrxUrhzJnjMzl6z6M43zSYN8MMp1ncM3jsZlr9X5IGDS7QeqEIMtwkNfKHi4x03iZ/ZNmt0fCihIjSj/7M666kTgMlsoxOs8JZXna3Emy6hZA==
 ```
 **Decrypted Output:**
 ```
@@ -154,18 +155,21 @@ Confidential
 #### Diffie-Hellman (with AES)
 **Input Text:**  
 `SharedSecretText`  
-**Shared AES Key (derived from DH):**  
-`b'\x12\x34\x56...etc...'`  
-**Encrypted Output:**
-```
-aGVsbG9kaGtleWVuY3J5cHRlZA==
-```
-**Decrypted Output:**
-```
-SharedSecretText
-```
+**Prime Number (P):**  
+`23`  
+**Primitive Root (G):**  
+`9`  
+**Alice's Private Key (a):**  
+`4`  
+**Bob's Private Key (b):**  
+`3`  
 
----
+**Step-by-step Key Exchange:**  
+- Alice computes: `x = G^a mod P = 9^4 mod 23 = 6`  
+- Bob computes: `y = G^b mod P = 9^3 mod 23 = 16`  
+- Alice computes shared secret: `ka = y^a mod P = 16^4 mod 23 = 9`  
+- Bob computes shared secret: `kb = x^b mod P = 6^3 mod 23 = 9`  
+- **Shared secret established:** `9`  
 
 ### Hashing Functions
 
@@ -174,7 +178,7 @@ SharedSecretText
 `hashme`  
 **Output:**
 ```
-b1c7b6b8c2e6e2e2e6c7b6b8c2e6e2e2e6c7b6b8c2e6e2e2e6c7b6b8c2e6e2e2
+02208b9403a87df9f4ed6b2ee2657efaa589026b4cce9accc8e8a5bf3d693c86
 ```
 
 #### MD5 (File)
@@ -182,7 +186,7 @@ b1c7b6b8c2e6e2e2e6c7b6b8c2e6e2e2e6c7b6b8c2e6e2e2e6c7b6b8c2e6e2e2
 `This is a file.`  
 **Output:**
 ```
-3de8f8b0dc94b8c2230fab9ec0ba0506
+6d432e1b8df49527390763d6ca834880
 ```
 
 ---
