@@ -349,16 +349,33 @@ if choice == "Symmetric Encryption/Decryption":
                     st.error("Shift keys length must be between 2 and the length of the text.")
                 else:
                     try:
+                        def caesar_report(text, shift_keys, ifdecrypt):
+                            lines = []
+                            shift_keys_len = len(shift_keys)
+                            for i, char in enumerate(text):
+                                if 32 <= ord(char) <= 126:
+                                    shift = shift_keys[i % shift_keys_len]
+                                    effective_shift = -shift if ifdecrypt else shift
+                                    shifted_char = chr((ord(char) - 32 + effective_shift) % 94 + 32)
+                                    lines.append(f"{i} {char} {shift} {shifted_char}")
+                                else:
+                                    lines.append(f"{i} {char} (no shift) {char}")
+                            return '\n'.join(lines)
                         if mode == "Encrypt":
-                            cipher_text, enc_report = caesar_encrypt_decrypt(text, shift_keys, ifdecrypt=False, show_report=True)
-                            decrypted_text, dec_report = caesar_encrypt_decrypt(cipher_text, shift_keys, ifdecrypt=True, show_report=True)
+                            cipher_text = caesar_encrypt_decrypt(text, shift_keys, ifdecrypt=False)
+                            enc_report = caesar_report(text, shift_keys, ifdecrypt=False)
+                            decrypted_text = caesar_encrypt_decrypt(cipher_text, shift_keys, ifdecrypt=True)
+                            dec_report = caesar_report(cipher_text, shift_keys, ifdecrypt=True)
                         else:
-                            cipher_text, enc_report = caesar_encrypt_decrypt(text, shift_keys, ifdecrypt=True, show_report=True)
-                            decrypted_text, dec_report = caesar_encrypt_decrypt(cipher_text, shift_keys, ifdecrypt=False, show_report=True)
-                        # Print result in the requested format
+                            cipher_text = caesar_encrypt_decrypt(text, shift_keys, ifdecrypt=True)
+                            enc_report = caesar_report(text, shift_keys, ifdecrypt=True)
+                            decrypted_text = caesar_encrypt_decrypt(cipher_text, shift_keys, ifdecrypt=False)
+                            dec_report = caesar_report(cipher_text, shift_keys, ifdecrypt=False)
                         result_block = (
                             f"{enc_report}\n"
+                            f"----------\n"
                             f"{dec_report}\n"
+                            f"----------\n"
                             f"Text: {text}\n"
                             f"Shift keys: {' '.join(map(str, shift_keys))}\n"
                             f"Cipher: {cipher_text}\n"
@@ -413,15 +430,33 @@ if choice == "Symmetric Encryption/Decryption":
                         if len(shift_keys) < 2 or len(shift_keys) > len(text):
                             st.error("Shift keys length must be between 2 and the length of the file content.")
                         else:
+                            def caesar_report(text, shift_keys, ifdecrypt):
+                                lines = []
+                                shift_keys_len = len(shift_keys)
+                                for i, char in enumerate(text):
+                                    if 32 <= ord(char) <= 126:
+                                        shift = shift_keys[i % shift_keys_len]
+                                        effective_shift = -shift if ifdecrypt else shift
+                                        shifted_char = chr((ord(char) - 32 + effective_shift) % 94 + 32)
+                                        lines.append(f"{i} {char} {shift} {shifted_char}")
+                                    else:
+                                        lines.append(f"{i} {char} (no shift) {char}")
+                                return '\n'.join(lines)
                             if mode == "Encrypt":
-                                cipher_text, enc_report = caesar_encrypt_decrypt(text, shift_keys, ifdecrypt=False, show_report=True)
-                                decrypted_text, dec_report = caesar_encrypt_decrypt(cipher_text, shift_keys, ifdecrypt=True, show_report=True)
+                                cipher_text = caesar_encrypt_decrypt(text, shift_keys, ifdecrypt=False)
+                                enc_report = caesar_report(text, shift_keys, ifdecrypt=False)
+                                decrypted_text = caesar_encrypt_decrypt(cipher_text, shift_keys, ifdecrypt=True)
+                                dec_report = caesar_report(cipher_text, shift_keys, ifdecrypt=True)
                             else:
-                                cipher_text, enc_report = caesar_encrypt_decrypt(text, shift_keys, ifdecrypt=True, show_report=True)
-                                decrypted_text, dec_report = caesar_encrypt_decrypt(cipher_text, shift_keys, ifdecrypt=False, show_report=True)
+                                cipher_text = caesar_encrypt_decrypt(text, shift_keys, ifdecrypt=True)
+                                enc_report = caesar_report(text, shift_keys, ifdecrypt=True)
+                                decrypted_text = caesar_encrypt_decrypt(cipher_text, shift_keys, ifdecrypt=False)
+                                dec_report = caesar_report(cipher_text, shift_keys, ifdecrypt=False)
                             result_block = (
                                 f"{enc_report}\n"
+                                f"----------\n"
                                 f"{dec_report}\n"
+                                f"----------\n"
                                 f"Text: {text}\n"
                                 f"Shift keys: {' '.join(map(str, shift_keys))}\n"
                                 f"Cipher: {cipher_text}\n"
