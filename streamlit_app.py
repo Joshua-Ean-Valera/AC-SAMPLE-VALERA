@@ -352,23 +352,19 @@ if choice == "Symmetric Encryption/Decryption":
                         if mode == "Encrypt":
                             cipher_text, enc_report = caesar_encrypt_decrypt(text, shift_keys, ifdecrypt=False, show_report=True)
                             decrypted_text, dec_report = caesar_encrypt_decrypt(cipher_text, shift_keys, ifdecrypt=True, show_report=True)
-                            enc_title = "Encryption Steps"
-                            dec_title = "Decryption Steps"
                         else:
                             cipher_text, enc_report = caesar_encrypt_decrypt(text, shift_keys, ifdecrypt=True, show_report=True)
                             decrypted_text, dec_report = caesar_encrypt_decrypt(cipher_text, shift_keys, ifdecrypt=False, show_report=True)
-                            enc_title = "Decryption Steps"
-                            dec_title = "Encryption Steps (Re-Encrypt)"
-                        # Present results in a more readable, styled way
-                        st.markdown(f"### {enc_title}")
-                        st.markdown(enc_report)
-                        st.markdown(f"### {dec_title}")
-                        st.markdown(dec_report)
-                        # st.markdown("---")
-                        st.markdown(f"<b>Text:</b> <code>{text}</code>", unsafe_allow_html=True)
-                        st.markdown(f"<b>Shift keys:</b> <code>{' '.join(map(str, shift_keys))}</code>", unsafe_allow_html=True)
-                        st.markdown(f"<b>Cipher:</b> <code>{cipher_text}</code>", unsafe_allow_html=True)
-                        st.markdown(f"<b>Decrypted text:</b> <code>{decrypted_text}</code>", unsafe_allow_html=True)
+                        # Print result in the requested format
+                        result_block = (
+                            f"{enc_report}\n"
+                            f"{dec_report}\n"
+                            f"Text: {text}\n"
+                            f"Shift keys: {' '.join(map(str, shift_keys))}\n"
+                            f"Cipher: {cipher_text}\n"
+                            f"Decrypted text: {decrypted_text}\n"
+                        )
+                        st.code(result_block)
                     except Exception as e:
                         st.error(str(e))
         elif algo == "Vigenère Cipher":
@@ -418,10 +414,21 @@ if choice == "Symmetric Encryption/Decryption":
                             st.error("Shift keys length must be between 2 and the length of the file content.")
                         else:
                             if mode == "Encrypt":
-                                out = caesar_encrypt_decrypt(text, shift_keys, ifdecrypt=False)
+                                cipher_text, enc_report = caesar_encrypt_decrypt(text, shift_keys, ifdecrypt=False, show_report=True)
+                                decrypted_text, dec_report = caesar_encrypt_decrypt(cipher_text, shift_keys, ifdecrypt=True, show_report=True)
                             else:
-                                out = caesar_encrypt_decrypt(text, shift_keys, ifdecrypt=True)
-                            st.download_button("Download Result", data=out.encode(), file_name="result.txt", key="file_caesar_download")
+                                cipher_text, enc_report = caesar_encrypt_decrypt(text, shift_keys, ifdecrypt=True, show_report=True)
+                                decrypted_text, dec_report = caesar_encrypt_decrypt(cipher_text, shift_keys, ifdecrypt=False, show_report=True)
+                            result_block = (
+                                f"{enc_report}\n"
+                                f"{dec_report}\n"
+                                f"Text: {text}\n"
+                                f"Shift keys: {' '.join(map(str, shift_keys))}\n"
+                                f"Cipher: {cipher_text}\n"
+                                f"Decrypted text: {decrypted_text}\n"
+                            )
+                            st.code(result_block)
+                            st.download_button("Download Result", data=result_block.encode(), file_name="caesar_result.txt", key="file_caesar_download")
                             st.text_area("File Content Preview", text, height=150, key="file_caesar_preview")
                     except Exception as e:
                         st.error(str(e))
