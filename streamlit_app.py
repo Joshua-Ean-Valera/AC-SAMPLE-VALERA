@@ -13,7 +13,114 @@ from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.hazmat.primitives.asymmetric import padding as asy_padding
 
-st.title("Applied Cryptography Application")
+# --- Custom CSS for a more beautiful UI ---
+st.markdown("""
+    <style>
+    .main {
+        background: linear-gradient(135deg, #e3f2fd 0%, #fce4ec 100%);
+    }
+    .stApp {
+        background: linear-gradient(135deg, #e3f2fd 0%, #fce4ec 100%);
+    }
+    .block-container {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+    .stTabs [data-baseweb="tab-list"] {
+        background: #e3f2fd;
+        border-radius: 8px 8px 0 0;
+        padding: 0.5rem 0.5rem 0 0.5rem;
+    }
+    .stTabs [data-baseweb="tab"] {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1976d2;
+        padding: 0.5rem 1.2rem;
+    }
+    .stTabs [aria-selected="true"] {
+        background: #fff;
+        border-radius: 8px 8px 0 0;
+        color: #d81b60;
+        border-bottom: 2px solid #d81b60;
+    }
+    .stTextInput>div>div>input, .stTextArea>div>textarea {
+        background: #f8bbd0;
+        border-radius: 6px;
+        border: 1px solid #1976d2;
+        color: #263238;
+        font-size: 1.1rem;
+    }
+    .stButton>button {
+        background: linear-gradient(90deg, #1976d2 0%, #d81b60 100%);
+        color: #fff;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        padding: 0.5rem 1.5rem;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+        border: none;
+        transition: background 0.2s;
+    }
+    .stButton>button:hover {
+        background: linear-gradient(90deg, #d81b60 0%, #1976d2 100%);
+        color: #fff;
+    }
+    .stDownloadButton>button {
+        background: linear-gradient(90deg, #43cea2 0%, #185a9d 100%);
+        color: #fff;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        padding: 0.5rem 1.5rem;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+        border: none;
+        transition: background 0.2s;
+    }
+    .stDownloadButton>button:hover {
+        background: linear-gradient(90deg, #185a9d 0%, #43cea2 100%);
+        color: #fff;
+    }
+    .stTextArea textarea {
+        background: #f3e5f5;
+        border-radius: 6px;
+        border: 1px solid #1976d2;
+        color: #263238;
+        font-size: 1.1rem;
+    }
+    .stCodeBlock {
+        background: #212121 !important;
+        color: #fff !important;
+        border-radius: 8px !important;
+        font-size: 1.1rem !important;
+        padding: 1rem !important;
+    }
+    .stMarkdown h2, .stMarkdown h3, .stMarkdown h4 {
+        color: #1976d2;
+    }
+    .stMarkdown code {
+        color: #d81b60;
+        background: #f8bbd0;
+        border-radius: 4px;
+        padding: 2px 6px;
+        font-size: 1.05rem;
+    }
+    .stAlert {
+        border-radius: 8px !important;
+        font-size: 1.1rem !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+st.markdown(
+    "<h1 style='text-align:center; color:#1976d2; font-size:2.5rem; margin-bottom:0.5rem;'>Applied Cryptography Application</h1>"
+    "<p style='text-align:center; color:#d81b60; font-size:1.2rem; margin-bottom:2rem;'>"
+    "A modern, interactive playground for classic and modern cryptography algorithms.<br>"
+    "Encrypt, decrypt, hash, and learn with beautiful visualizations."
+    "</p>",
+    unsafe_allow_html=True
+)
 
 MENU = [
     "Symmetric Encryption/Decryption",
@@ -21,7 +128,7 @@ MENU = [
     "Hashing Functions",
     "Algorithm Informations"
 ]
-choice = st.sidebar.selectbox("Navigation", MENU)
+choice = st.sidebar.selectbox("🔐 Navigation", MENU)
 
 # --- Helper Functions ---
 
