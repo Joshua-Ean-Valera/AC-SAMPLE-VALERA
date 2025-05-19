@@ -32,39 +32,51 @@ st.markdown("""
         padding: 0.5rem 0.5rem 0 0.5rem;
     }
     .stTabs [data-baseweb="tab"] {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: #1976d2;
-        padding: 0.5rem 1.2rem;
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #1565c0;
+        padding: 0.7rem 1.5rem;
+        letter-spacing: 0.5px;
+        transition: color 0.2s;
     }
     .stTabs [aria-selected="true"] {
         background: #fff;
-        border-radius: 8px 8px 0 0;
+        border-radius: 12px 12px 0 0;
         color: #d81b60;
-        border-bottom: 2px solid #d81b60;
+        border-bottom: 3px solid #d81b60;
+        box-shadow: 0 2px 8px #d81b6022;
     }
     .stTextInput>div>div>input, .stTextArea>div>textarea {
         background: #f8bbd0;
-        border-radius: 6px;
-        border: 1px solid #1976d2;
+        border-radius: 8px;
+        border: 2px solid #1976d2;
         color: #263238;
-        font-size: 1.1rem;
+        font-size: 1.13rem;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        transition: border 0.2s;
+    }
+    .stTextInput>div>div>input:focus, .stTextArea>div>textarea:focus {
+        border: 2px solid #d81b60;
+        outline: none;
     }
     .stButton>button {
         background: linear-gradient(90deg, #1976d2 0%, #d81b60 100%);
         color: #fff;
-        border-radius: 6px;
-        font-weight: 600;
-        font-size: 1.1rem;
-        padding: 0.5rem 1.5rem;
-        margin-top: 0.5rem;
-        margin-bottom: 0.5rem;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 1.13rem;
+        padding: 0.6rem 1.7rem;
+        margin-top: 0.7rem;
+        margin-bottom: 0.7rem;
         border: none;
-        transition: background 0.2s;
+        box-shadow: 0 2px 8px #1976d233;
+        transition: background 0.2s, box-shadow 0.2s;
     }
     .stButton>button:hover {
         background: linear-gradient(90deg, #d81b60 0%, #1976d2 100%);
         color: #fff;
+        box-shadow: 0 4px 16px #d81b6033;
     }
     .stDownloadButton>button {
         background: linear-gradient(90deg, #43cea2 0%, #185a9d 100%);
