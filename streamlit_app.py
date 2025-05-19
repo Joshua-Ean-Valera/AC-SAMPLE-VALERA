@@ -361,10 +361,10 @@ if choice == "Symmetric Encryption/Decryption":
                             dec_title = "Encryption Steps (Re-Encrypt)"
                         # Present results in a more readable, styled way
                         st.markdown(f"### {enc_title}")
-                        st.markdown({enc_report})
+                        st.markdown(enc_report)
                         st.markdown(f"### {dec_title}")
-                        st.markdown(f"<pre style='background:#f6f8fa;border-radius:6px;padding:10px'>{dec_report}</pre>", unsafe_allow_html=True)
-                        st.markdown("---")
+                        st.markdown(dec_report)
+                        # st.markdown("---")
                         st.markdown(f"<b>Text:</b> <code>{text}</code>", unsafe_allow_html=True)
                         st.markdown(f"<b>Shift keys:</b> <code>{' '.join(map(str, shift_keys))}</code>", unsafe_allow_html=True)
                         st.markdown(f"<b>Cipher:</b> <code>{cipher_text}</code>", unsafe_allow_html=True)
