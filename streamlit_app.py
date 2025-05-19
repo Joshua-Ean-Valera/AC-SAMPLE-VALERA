@@ -194,26 +194,44 @@ def remove_padding(message, padding_char='_'):
 def xor_operation(block, key):
     return [ord(b) ^ ord(k) for b, k in zip(block, key)]
 
-def xor_block_encrypt(text, key):
+def xor_block_encrypt(text, key, show_steps=False):
     text = pad_message(text)
     result = []
+    steps = []
     for i in range(0, len(text), 8):
         block = text[i:i+8]
         encrypted_block = xor_operation(block, key)
         result.extend(encrypted_block)
-    return ' '.join(format(byte, '02X') for byte in result)
+        if show_steps:
+            step_lines = []
+            for j, (b, k) in enumerate(zip(block, key)):
+                step_lines.append(f"Block {i//8}, Char {j}: '{b}' XOR '{k}' = {ord(b)} ^ {ord(k)} = {ord(b)^ord(k)} (0x{ord(b)^ord(k):02X})")
+            steps.append('\n'.join(step_lines))
+    if show_steps:
+        return ' '.join(format(byte, '02X') for byte in result), '\n\n'.join(steps)
+    else:
+        return ' '.join(format(byte, '02X') for byte in result)
 
-def xor_block_decrypt(hex_text, key):
+def xor_block_decrypt(hex_text, key, show_steps=False):
     try:
         hex_values = [int(h, 16) for h in hex_text.split()]
     except ValueError:
         return "Error: Invalid hex input for decryption"
     result = []
+    steps = []
     for i in range(0, len(hex_values), 8):
         block = hex_values[i:i+8]
         decrypted_block = ''.join(chr(b ^ ord(k)) for b, k in zip(block, key))
         result.append(decrypted_block)
-    return remove_padding(''.join(result))
+        if show_steps:
+            step_lines = []
+            for j, (b, k) in enumerate(zip(block, key)):
+                step_lines.append(f"Block {i//8}, Char {j}: {b} (0x{b:02X}) XOR '{k}' = {b} ^ {ord(k)} = {b^ord(k)} ('{chr(b^ord(k))}')")
+            steps.append('\n'.join(step_lines))
+    if show_steps:
+        return remove_padding(''.join(result)), '\n\n'.join(steps)
+    else:
+        return remove_padding(''.join(result))
 
 # --- Caesar Cipher (multi-key) Implementation ---
 def caesar_encrypt_decrypt(text, shift_keys, ifdecrypt, show_report=False):
@@ -332,10 +350,12 @@ if choice == "Symmetric Encryption/Decryption":
                 else:
                     try:
                         if mode == "Encrypt":
-                            result = xor_block_encrypt(text, key)
+                            result, steps = xor_block_encrypt(text, key, show_steps=True)
                         else:
-                            result = xor_block_decrypt(text, key)
+                            result, steps = xor_block_decrypt(text, key, show_steps=True)
                         st.code(result)
+                        st.markdown("#### Step-by-step process")
+                        st.code(steps)
                     except Exception as e:
                         st.error(str(e))
         elif algo == "Caesar Cipher (multi-key)":
@@ -411,13 +431,15 @@ if choice == "Symmetric Encryption/Decryption":
                             file_bytes = uploaded_file.read()
                             text = file_bytes.decode(errors='ignore')
                             if mode == "Encrypt":
-                                out = xor_block_encrypt(text, key)
+                                out, steps = xor_block_encrypt(text, key, show_steps=True)
                                 out_bytes = out.encode()
                             else:
-                                out = xor_block_decrypt(text, key)
+                                out, steps = xor_block_decrypt(text, key, show_steps=True)
                                 out_bytes = out.encode()
                             st.download_button("Download Result", data=out_bytes, file_name="Block_Cipher_Result.txt", key="file_xor_download")
                             st.text_area("File Content Preview", text, height=150, key="file_xor_preview")
+                            st.markdown("#### Step-by-step process")
+                            st.code(steps)
                         except Exception as e:
                             st.error(str(e))
             elif algo == "Caesar Cipher (multi-key)":
