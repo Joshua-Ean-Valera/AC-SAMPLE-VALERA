@@ -205,8 +205,11 @@ def xor_block_encrypt(text, key, show_steps=False):
         if show_steps:
             step_lines = []
             for j, (b, k) in enumerate(zip(block, key)):
-                step_lines.append(f"Block {i//8}, Char {j}: '{b}' XOR '{k}' = {ord(b)} ^ {ord(k)} = {ord(b)^ord(k)} (0x{ord(b)^ord(k):02X})")
-            steps.append('\n'.join(step_lines))
+                # Only show step if the character is not padding (i.e., not the padding char)
+                if b != '_':
+                    step_lines.append(f"Block {i//8}, Char {j}: '{b}' XOR '{k}' = {ord(b)} ^ {ord(k)} = {ord(b)^ord(k)} (0x{ord(b)^ord(k):02X})")
+            if step_lines:
+                steps.append('\n'.join(step_lines))
     if show_steps:
         return ' '.join(format(byte, '02X') for byte in result), '\n\n'.join(steps)
     else:
@@ -226,8 +229,12 @@ def xor_block_decrypt(hex_text, key, show_steps=False):
         if show_steps:
             step_lines = []
             for j, (b, k) in enumerate(zip(block, key)):
-                step_lines.append(f"Block {i//8}, Char {j}: {b} (0x{b:02X}) XOR '{k}' = {b} ^ {ord(k)} = {b^ord(k)} ('{chr(b^ord(k))}')")
-            steps.append('\n'.join(step_lines))
+                char = chr(b ^ ord(k))
+                # Only show step if the character is not padding (i.e., not the padding char)
+                if char != '_':
+                    step_lines.append(f"Block {i//8}, Char {j}: {b} (0x{b:02X}) XOR '{k}' = {b} ^ {ord(k)} = {b^ord(k)} ('{char}')")
+            if step_lines:
+                steps.append('\n'.join(step_lines))
     if show_steps:
         return remove_padding(''.join(result)), '\n\n'.join(steps)
     else:
