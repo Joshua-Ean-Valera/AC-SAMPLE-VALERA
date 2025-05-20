@@ -376,7 +376,7 @@ if choice == "Symmetric Encryption/Decryption":
         mode = st.radio("Mode", ["Encrypt", "Decrypt"])
         text = st.text_area("Text")
         if algo == "Block Cipher (XOR)":
-            key = st.text_input("Key (exactly 8 characters)", value="my8chark")
+            key = st.text_input("Key (exactly 8 characters)", value="password")
             if st.button("Run"):
                 if len(key) != 8:
                     st.error("Key must be exactly 8 characters")
@@ -386,7 +386,6 @@ if choice == "Symmetric Encryption/Decryption":
                             result, steps = xor_block_encrypt(text, key, show_steps=True)
                         else:
                             result, steps = xor_block_decrypt(text, key, show_steps=True)
-                        st.write("Result:")
                         st.code(result)
                         if steps:
                             st.markdown("#### Step-by-step process")
@@ -394,7 +393,7 @@ if choice == "Symmetric Encryption/Decryption":
                     except Exception as e:
                         st.error(str(e))
         elif algo == "Caesar Cipher (multi-key)":
-            shift_keys_str = st.text_input("Shift Keys (space-separated integers)", value="3 1 4")
+            shift_keys_str = st.text_input("Shift Keys (space-separated integers)", value="1 2 3 4 5")
             try:
                 shift_keys = list(map(int, shift_keys_str.strip().split()))
             except Exception:
@@ -426,7 +425,6 @@ if choice == "Symmetric Encryption/Decryption":
                             enc_report = caesar_report(text, shift_keys, ifdecrypt=True)
                             decrypted_text = caesar_encrypt_decrypt(cipher_text, shift_keys, ifdecrypt=False)
                             dec_report = caesar_report(cipher_text, shift_keys, ifdecrypt=False)
-                        st.markdown("#### Result")
                         result_block = (
                             f"{enc_report}\n"
                             f"----------\n"
@@ -451,7 +449,6 @@ if choice == "Symmetric Encryption/Decryption":
                     else:
                         result = vigenere_decrypt(text, key, alphabet)
                         steps = vigenere_steps(text, key, alphabet, encrypt=False)
-                    st.markdown("#### Result")
                     st.code(result)
                     if steps:
                         st.markdown("#### Step-by-step process")
@@ -478,12 +475,8 @@ if choice == "Symmetric Encryption/Decryption":
                             else:
                                 out, steps = xor_block_decrypt(text, key, show_steps=True)
                                 out_bytes = out.encode()
-                            #st.download_button("Download Result", data=out_bytes, file_name="Block_Cipher_Result.txt", key="file_xor_download")
                             st.text_area("File Content Preview", text, height=150, key="file_xor_preview")
                             if steps:
-                                # st.markdown("#### Step-by-step process")
-                                # st.code(steps)
-                                # Combine result and steps for download
                                 combined = f"Result:\n{out}\n\nStep-by-step process:\n{steps}"
                                 st.download_button(
                                     "Download Result & Steps",
@@ -554,10 +547,21 @@ if choice == "Symmetric Encryption/Decryption":
                         text = file_bytes.decode(errors='ignore')
                         if mode == "Encrypt":
                             out = vigenere_encrypt(text, key, alphabet)
+                            steps = vigenere_steps(text, key, alphabet, encrypt=True)
                         else:
                             out = vigenere_decrypt(text, key, alphabet)
-                        st.download_button("Download Result", data=out.encode(), file_name="Vigenère_Cipher_Result.txt", key="file_vigenere_download")
+                            steps = vigenere_steps(text, key, alphabet, encrypt=False)
+                        #st.download_button("Download Result", data=out.encode(), file_name="Vigenère_Cipher_Result.txt", key="file_vigenere_download")
                         st.text_area("File Content Preview", text, height=150, key="file_vigenere_preview")
+                        # Download result with steps
+                        if steps:
+                            combined = f"Result:\n{out}\n\nStep-by-step process:\n{steps}"
+                            st.download_button(
+                                "Download Result & Steps",
+                                data=combined.encode(),
+                                file_name="Vigenère_Cipher_Result_and_Steps.txt",
+                                key="file_vigenere_steps_download"
+                            )
                     except Exception as e:
                         st.error(str(e))
 
