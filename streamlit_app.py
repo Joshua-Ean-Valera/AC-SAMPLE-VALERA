@@ -386,6 +386,7 @@ if choice == "Symmetric Encryption/Decryption":
                             result, steps = xor_block_encrypt(text, key, show_steps=True)
                         else:
                             result, steps = xor_block_decrypt(text, key, show_steps=True)
+                        st.markdown("#### Result")
                         st.code(result)
                         if steps:
                             st.markdown("#### Step-by-step process")
@@ -425,6 +426,7 @@ if choice == "Symmetric Encryption/Decryption":
                             enc_report = caesar_report(text, shift_keys, ifdecrypt=True)
                             decrypted_text = caesar_encrypt_decrypt(cipher_text, shift_keys, ifdecrypt=False)
                             dec_report = caesar_report(cipher_text, shift_keys, ifdecrypt=False)
+                        st.markdown("#### Result")
                         result_block = (
                             f"{enc_report}\n"
                             f"----------\n"
@@ -449,6 +451,7 @@ if choice == "Symmetric Encryption/Decryption":
                     else:
                         result = vigenere_decrypt(text, key, alphabet)
                         steps = vigenere_steps(text, key, alphabet, encrypt=False)
+                    st.markdown("#### Result")
                     st.code(result)
                     if steps:
                         st.markdown("#### Step-by-step process")
