@@ -333,6 +333,35 @@ def dh_demo_generate_keys(P, G, a, b):
     kb = dh_power(x, b, P)
     return x, y, ka, kb
 
+def vigenere_steps(text, key, alphabet, encrypt=True):
+    """
+    Returns a step-by-step string for Vigenère encryption or decryption.
+    """
+    if not text or not key or not alphabet:
+        return ""
+    char_to_index = {char: idx for idx, char in enumerate(alphabet)}
+    steps = []
+    filtered_text = ''.join([c for c in text if c != ' '])
+    extended_key = ''.join([key[i % len(key)] for i in range(len(filtered_text))])
+    key_index = 0
+    for i, c in enumerate(text):
+        if c == ' ':
+            steps.append(f"{i}   (space)")
+        else:
+            k = extended_key[key_index]
+            c_idx = char_to_index[c]
+            k_idx = char_to_index[k]
+            if encrypt:
+                res_idx = (c_idx + k_idx) % len(alphabet)
+                res_char = alphabet[res_idx]
+                steps.append(f"{i} {c} + {k} ({c_idx}+{k_idx} mod {len(alphabet)}) = {res_idx} ({res_char})")
+            else:
+                res_idx = (c_idx - k_idx) % len(alphabet)
+                res_char = alphabet[res_idx]
+                steps.append(f"{i} {c} - {k} ({c_idx}-{k_idx} mod {len(alphabet)}) = {res_idx} ({res_char})")
+            key_index += 1
+    return '\n'.join(steps)
+
 # --- UI Logic ---
 
 if choice == "Symmetric Encryption/Decryption":
@@ -412,9 +441,14 @@ if choice == "Symmetric Encryption/Decryption":
                 try:
                     if mode == "Encrypt":
                         result = vigenere_encrypt(text, key, alphabet)
+                        steps = vigenere_steps(text, key, alphabet, encrypt=True)
                     else:
                         result = vigenere_decrypt(text, key, alphabet)
+                        steps = vigenere_steps(result, key, alphabet, encrypt=False)
                     st.code(result)
+                    if steps:
+                        st.markdown("#### Step-by-step process")
+                        st.code(steps)
                 except Exception as e:
                     st.error(str(e))
     with tab2:
@@ -494,6 +528,7 @@ if choice == "Symmetric Encryption/Decryption":
                                 f"Cipher: {cipher_text}\n"
                                 f"Decrypted text: {decrypted_text}\n"
                             )
+                            st.text_area("File Content Preview", text, height=150, key="file_caesar_preview")
                             st.code(result_block)
                             st.download_button(
                                 "Download Result & Steps",
@@ -501,7 +536,6 @@ if choice == "Symmetric Encryption/Decryption":
                                 file_name="Caesar_Cipher_Result.txt",
                                 key="file_caesar_download"
                             )
-                            st.text_area("File Content Preview", text, height=150, key="file_caesar_preview")
                     except Exception as e:
                         st.error(str(e))
             elif algo == "Vigenère Cipher":
