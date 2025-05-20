@@ -434,23 +434,23 @@ if choice == "Symmetric Encryption/Decryption":
                         st.code(result_block)
                     except Exception as e:
                         st.error(str(e))
-        elif algo == "Vigenère Cipher":
-            alphabet = st.text_input("Alphabet (unique chars, e.g. ZYXWVUTSRQPONMLKJIHGFEDCBA)", value="ZYXWVUTSRQPONMLKJIHGFEDCBA")
-            key = st.text_input("Vigenère Key (letters only)", value="KEY")
-            if st.button("Run"):
-                try:
-                    if mode == "Encrypt":
-                        result = vigenere_encrypt(text, key, alphabet)
-                        steps = vigenere_steps(text, key, alphabet, encrypt=True)
-                    else:
-                        result = vigenere_decrypt(text, key, alphabet)
-                        steps = vigenere_steps(result, key, alphabet, encrypt=False)
-                    st.code(result)
-                    if steps:
-                        st.markdown("#### Step-by-step process")
-                        st.code(steps)
-                except Exception as e:
-                    st.error(str(e))
+            elif algo == "Vigenère Cipher":
+                alphabet = st.text_input("Alphabet (unique chars, e.g. ZYXWVUTSRQPONMLKJIHGFEDCBA)", value="ZYXWVUTSRQPONMLKJIHGFEDCBA")
+                key = st.text_input("Vigenère Key (letters only)", value="KEY")
+                if st.button("Run"):
+                    try:
+                        if mode == "Encrypt":
+                            result = vigenere_encrypt(text, key, alphabet)
+                            steps = vigenere_steps(text, key, alphabet, encrypt=True)
+                        else:
+                            result = vigenere_decrypt(text, key, alphabet)
+                            steps = vigenere_steps(text, key, alphabet, encrypt=False)
+                        st.code(result)
+                        if steps:
+                            st.markdown("#### Step-by-step process")
+                            st.code(steps)
+                    except Exception as e:
+                        st.error(str(e))
     with tab2:
         algo = st.selectbox("Algorithm (File)", ["Block Cipher (XOR)", "Caesar Cipher (multi-key)", "Vigenère Cipher"])
         mode = st.radio("Mode (File)", ["Encrypt", "Decrypt"])
