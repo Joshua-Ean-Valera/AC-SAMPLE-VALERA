@@ -333,39 +333,6 @@ def dh_demo_generate_keys(P, G, a, b):
     kb = dh_power(x, b, P)
     return x, y, ka, kb
 
-def vigenere_steps(text, key, alphabet, encrypt=True):
-    """
-    Returns a step-by-step string for Vigenère encryption or decryption.
-    Shows every character, marks invalid ones.
-    """
-    if not text or not key or not alphabet:
-        return ""
-    char_to_index = {char: idx for idx, char in enumerate(alphabet)}
-    steps = []
-    # Only count key for valid chars in alphabet (skip spaces and invalids)
-    filtered_text = ''.join([c for c in text if c in alphabet])
-    extended_key = ''.join([key[i % len(key)] for i in range(len(filtered_text))])
-    key_index = 0
-    for i, c in enumerate(text):
-        if c == ' ':
-            steps.append(f"{i}   (space)")
-        elif c not in alphabet:
-            steps.append(f"{i} {c} (not in alphabet, skipped)")
-        else:
-            k = extended_key[key_index]
-            c_idx = char_to_index[c]
-            k_idx = char_to_index[k]
-            if encrypt:
-                res_idx = (c_idx + k_idx) % len(alphabet)
-                res_char = alphabet[res_idx]
-                steps.append(f"{i} {c} + {k} ({c_idx}+{k_idx} mod {len(alphabet)}) = {res_idx} ({res_char})")
-            else:
-                res_idx = (c_idx - k_idx) % len(alphabet)
-                res_char = alphabet[res_idx]
-                steps.append(f"{i} {c} - {k} ({c_idx}-{k_idx} mod {len(alphabet)}) = {res_idx} ({res_char})")
-            key_index += 1
-    return '\n'.join(steps)
-
 # --- UI Logic ---
 
 if choice == "Symmetric Encryption/Decryption":
@@ -445,16 +412,9 @@ if choice == "Symmetric Encryption/Decryption":
                 try:
                     if mode == "Encrypt":
                         result = vigenere_encrypt(text, key, alphabet)
-                        steps = vigenere_steps(text, key, alphabet, encrypt=True)
                     else:
                         result = vigenere_decrypt(text, key, alphabet)
-                        steps = vigenere_steps(text, key, alphabet, encrypt=False)
-                    output_block = (
-                        f"Result:\n{result}\n"
-                        f"{'-'*10}\n"
-                        f"Step-by-step process:\n{steps}"
-                    )
-                    st.code(output_block)
+                    st.code(result)
                 except Exception as e:
                     st.error(str(e))
     with tab2:
