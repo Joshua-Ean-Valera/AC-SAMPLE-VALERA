@@ -447,7 +447,7 @@ if choice == "Symmetric Encryption/Decryption":
                         steps = vigenere_steps(text, key, alphabet, encrypt=False)
                     st.code(result)
                     st.markdown("#### Step-by-step process")
-                    if steps.strip():
+                    if steps and steps.strip():
                         st.code(steps)
                     else:
                         st.warning("No step-by-step process generated. (Check your text, key, and alphabet inputs!)")
