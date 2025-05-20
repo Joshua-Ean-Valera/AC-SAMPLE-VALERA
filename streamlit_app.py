@@ -445,12 +445,13 @@ if choice == "Symmetric Encryption/Decryption":
                     else:
                         result = vigenere_decrypt(text, key, alphabet)
                         steps = vigenere_steps(text, key, alphabet, encrypt=False)
-                    st.code(result)
-                    st.markdown("#### Step-by-step process")
-                    if steps and steps.strip():
-                        st.code(steps)
-                    else:
-                        st.warning("No step-by-step process generated. (Check your text, key, and alphabet inputs!)")
+                    
+                    output_block = (
+                        f"Result:\n{result}\n"
+                        f"{'-'*10}\n"
+                        f"Step-by-step process:\n{steps}"
+                    )
+                    st.code(output_block)
                 except Exception as e:
                     st.error(str(e))
     with tab2:
