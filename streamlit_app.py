@@ -342,6 +342,7 @@ def vigenere_steps(text, key, alphabet, encrypt=True):
         return ""
     char_to_index = {char: idx for idx, char in enumerate(alphabet)}
     steps = []
+    # Only count key for valid chars in alphabet (skip spaces and invalids)
     filtered_text = ''.join([c for c in text if c in alphabet])
     extended_key = ''.join([key[i % len(key)] for i in range(len(filtered_text))])
     key_index = 0
@@ -448,7 +449,6 @@ if choice == "Symmetric Encryption/Decryption":
                     else:
                         result = vigenere_decrypt(text, key, alphabet)
                         steps = vigenere_steps(text, key, alphabet, encrypt=False)
-                    
                     output_block = (
                         f"Result:\n{result}\n"
                         f"{'-'*10}\n"
@@ -545,7 +545,6 @@ if choice == "Symmetric Encryption/Decryption":
                     except Exception as e:
                         st.error(str(e))
             elif algo == "Vigenère Cipher":
-                st.title("meron ba")
                 alphabet = st.text_input("Alphabet (unique chars, e.g. ZYXWVUTSRQPONMLKJIHGFEDCBA)", value="ZYXWVUTSRQPONMLKJIHGFEDCBA", key="file_vigenere_alphabet")
                 key = st.text_input("Vigenère Key (letters only)", value="KEY", key="file_vigenere_key")
                 if st.button("Run File Crypto", key="file_vigenere_btn"):
