@@ -461,7 +461,7 @@ if choice == "Symmetric Encryption/Decryption":
         uploaded_file = st.file_uploader("Upload File", type=None)
         if uploaded_file:
             if algo == "Block Cipher (XOR)":
-                key = st.text_input("Key (exactly 8 characters)", value="my8chark", key="file_xor_key")
+                key = st.text_input("Key (exactly 8 characters)", value="password", key="file_xor_key")
                 if st.button("Run File Crypto", key="file_xor_btn"):
                     if len(key) != 8:
                         st.error("Key must be exactly 8 characters")
@@ -487,7 +487,7 @@ if choice == "Symmetric Encryption/Decryption":
                         except Exception as e:
                             st.error(str(e))
             elif algo == "Caesar Cipher (multi-key)":
-                shift_keys_str = st.text_input("Shift Keys (space-separated integers)", value="3 1 4", key="file_caesar_keys")
+                shift_keys_str = st.text_input("Shift Keys (space-separated integers)", value="1 2 3 4 5", key="file_caesar_keys")
                 if st.button("Run File Crypto", key="file_caesar_btn"):
                     try:
                         shift_keys = list(map(int, shift_keys_str.strip().split()))
