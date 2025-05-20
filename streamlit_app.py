@@ -387,7 +387,7 @@ if choice == "Symmetric Encryption/Decryption":
                         else:
                             result, steps = xor_block_decrypt(text, key, show_steps=True)
                         st.text("Result:")
-                        st.code(result)
+                        st.code(f"Result: \n", {result})
                         if steps:
                             st.markdown("#### Step-by-step process")
                             st.code(steps)
