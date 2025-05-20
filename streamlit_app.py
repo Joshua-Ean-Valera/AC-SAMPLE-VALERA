@@ -545,6 +545,7 @@ if choice == "Symmetric Encryption/Decryption":
                     except Exception as e:
                         st.error(str(e))
             elif algo == "Vigenère Cipher":
+                st.text("meron ba")
                 alphabet = st.text_input("Alphabet (unique chars, e.g. ZYXWVUTSRQPONMLKJIHGFEDCBA)", value="ZYXWVUTSRQPONMLKJIHGFEDCBA", key="file_vigenere_alphabet")
                 key = st.text_input("Vigenère Key (letters only)", value="KEY", key="file_vigenere_key")
                 if st.button("Run File Crypto", key="file_vigenere_btn"):
