@@ -440,8 +440,14 @@ if choice == "Symmetric Encryption/Decryption":
                             st.download_button("Download Result", data=out_bytes, file_name="Block_Cipher_Result.txt", key="file_xor_download")
                             st.text_area("File Content Preview", text, height=150, key="file_xor_preview")
                             if steps:
-                                st.markdown("#### Step-by-step process")
-                                st.code(steps)
+                                # Combine result and steps for download
+                                combined = f"Result:\n{out}\n\nStep-by-step process:\n{steps}"
+                                st.download_button(
+                                    "Download Result & Steps",
+                                    data=combined.encode(),
+                                    file_name="Block_Cipher_Result_and_Steps.txt",
+                                    key="file_xor_steps_download"
+                                )
                         except Exception as e:
                             st.error(str(e))
             elif algo == "Caesar Cipher (multi-key)":
