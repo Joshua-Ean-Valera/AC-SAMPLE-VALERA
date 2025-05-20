@@ -437,7 +437,7 @@ if choice == "Symmetric Encryption/Decryption":
                             else:
                                 out, steps = xor_block_decrypt(text, key, show_steps=True)
                                 out_bytes = out.encode()
-                            st.download_button("Download Result", data=out_bytes, file_name="Block_Cipher_Result.txt", key="file_xor_download")
+                            #st.download_button("Download Result", data=out_bytes, file_name="Block_Cipher_Result.txt", key="file_xor_download")
                             st.text_area("File Content Preview", text, height=150, key="file_xor_preview")
                             if steps:
                                 # st.markdown("#### Step-by-step process")
