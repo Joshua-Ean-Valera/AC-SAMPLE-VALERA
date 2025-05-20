@@ -529,7 +529,6 @@ if choice == "Symmetric Encryption/Decryption":
                                 f"Decrypted text: {decrypted_text}\n"
                             )
                             st.text_area("File Content Preview", text, height=150, key="file_caesar_preview")
-                            st.code(result_block)
                             st.download_button(
                                 "Download Result & Steps",
                                 data=result_block.encode(),
